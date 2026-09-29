@@ -39,7 +39,7 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
   isSyncing = false
 }) => {
   const [calendarMenuOpen, setCalendarMenuOpen] = useState<string | null>(null);
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
 
   // Live countdown per-second tick
   useEffect(() => {
@@ -48,6 +48,19 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Safely trigger live transition when timer expires inside useEffect (never during render)
+  useEffect(() => {
+    if (!onMatchBecomesLive) return;
+    matches.forEach((m) => {
+      if (m.status === 'SCHEDULED') {
+        const countdown = calculateMatchCountdown(m.startTime);
+        if (countdown.isLive) {
+          onMatchBecomesLive(m.id);
+        }
+      }
+    });
+  }, [matches, tick, onMatchBecomesLive]);
 
   // Filter matches
   const filteredMatches = matches.filter((m) => {
@@ -212,11 +225,6 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
 
             // Real-time Countdown calculation for scheduled games
             const countdown = calculateMatchCountdown(match.startTime);
-
-            // Auto-trigger live transition when timer expires
-            if (countdown.isLive && match.status === 'SCHEDULED' && onMatchBecomesLive) {
-              onMatchBecomesLive(match.id);
-            }
 
             const goalEvents = match.events.filter(
               (e) => e.type === 'GOAL' || e.type === 'PENALTY_GOAL'

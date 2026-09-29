@@ -1,20 +1,28 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, Activity, Flame, BarChart2 } from 'lucide-react';
+import { Sparkles, Activity, Flame, BarChart2, Image as ImageIcon } from 'lucide-react';
 import { Match } from '../types/football';
+import cleatsHeroImg from '../assets/images/cyber_pitch_cleats_hero_1790513556958.jpg';
 
 interface HeroPitchBannerProps {
   featuredMatch?: Match;
   onSelectMatch: (match: Match) => void;
   onOpenHighlights: () => void;
+  customBannerImage?: string | null;
+  bannerOverlayOpacity?: number;
+  onOpenCustomizer?: () => void;
 }
 
 export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
   featuredMatch,
   onSelectMatch,
-  onOpenHighlights
+  onOpenHighlights,
+  customBannerImage,
+  bannerOverlayOpacity = 0.45,
+  onOpenCustomizer
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [particlesActive, setParticlesActive] = useState(true);
+  const [cleatsImageSrc, setCleatsImageSrc] = useState<string>(cleatsHeroImg);
 
   // Dynamic cyber light particles canvas effect responding to cursor and clicks
   useEffect(() => {
@@ -124,12 +132,20 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
 
   return (
     <div className="relative w-full rounded-2xl overflow-hidden border border-emerald-500/30 bg-[#09111e] shadow-2xl group">
-      {/* Background Graphic Asset: Photorealistic low-angle cyber soccer cleats on glowing circuit glass pitch */}
+      {/* Background Graphic Asset: Photorealistic cyber soccer cleats or customized user image */}
       <div className="relative aspect-[21/9] min-h-[320px] sm:min-h-[420px] w-full overflow-hidden">
-         <img
-          src="https://unsplash.com"
-          alt="Cận cảnh giày đá bóng"
-          referrerPolicy="no-referrer"
+        <img
+          src={customBannerImage || cleatsImageSrc}
+          alt="Hình nền sân cỏ số hoặc ảnh tùy chỉnh giao diện"
+          onError={() => {
+            const fallbackPath = './assets/images/cyber_pitch_cleats_hero_1790513556958.jpg';
+            const secondFallback = './images/cyber_pitch_cleats_hero_1790513556958.jpg';
+            if (cleatsImageSrc !== fallbackPath && cleatsImageSrc !== secondFallback) {
+              setCleatsImageSrc(fallbackPath);
+            } else if (cleatsImageSrc === fallbackPath) {
+              setCleatsImageSrc(secondFallback);
+            }
+          }}
           className="w-full h-full object-cover object-bottom scale-100 group-hover:scale-[1.02] transition-transform duration-700 ease-out"
         />
 
@@ -140,12 +156,34 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
           title="Nhấp vào mặt sân để phóng các hạt phân tử ánh sáng (Light Particles)!"
         />
 
+        {/* Dynamic Dark Overlay matching user's opacity preference */}
+        <div
+          className="absolute inset-0 bg-[#080d16] pointer-events-none z-10 transition-opacity"
+          style={{ opacity: bannerOverlayOpacity }}
+        />
+
         {/* Gradient Scrims ensuring high contrast for text */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#080d16] via-[#080d16]/60 to-transparent pointer-events-none z-20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#080d16] via-[#080d16]/70 to-transparent pointer-events-none z-20" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#080d16]/90 via-[#080d16]/40 to-transparent pointer-events-none z-20" />
 
         {/* Subdued cybernetic grid scanline effect */}
         <div className="absolute inset-0 bg-[radial-gradient(#10b981_1px,transparent_1px)] [background-size:24px_24px] opacity-15 pointer-events-none z-20" />
+
+        {/* Floating Customizer Button */}
+        {onOpenCustomizer && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenCustomizer();
+            }}
+            title="Tùy biến hình ảnh giao diện từ máy tính hoặc album điện thoại"
+            className="absolute top-3.5 right-3.5 z-30 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-black/60 hover:bg-black/85 backdrop-blur-md text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 hover:border-emerald-400 text-xs font-semibold transition-all shadow-lg pointer-events-auto group/btn cursor-pointer"
+          >
+            <ImageIcon className="w-3.5 h-3.5 text-emerald-400 group-hover/btn:scale-110 transition-transform" />
+            <span className="hidden sm:inline">Tùy biến ảnh</span>
+            <span className="sm:hidden">Đổi ảnh</span>
+          </button>
+        )}
       </div>
 
       {/* Main Foreground Content */}

@@ -16,6 +16,8 @@ import { ScheduleSection } from './components/ScheduleSection';
 import { ExpertAnalysisSection } from './components/ExpertAnalysisSection';
 import { PredictionGameModal } from './components/PredictionGameModal';
 import { NotificationSettingsModal } from './components/NotificationSettingsModal';
+import { ThemeCustomizerModal } from './components/ThemeCustomizerModal';
+import { CustomImageConfig } from './types/theme';
 import { GoalAlertBanner, GoalAlertData } from './components/GoalAlertBanner';
 import { RefreshCw } from 'lucide-react';
 
@@ -35,6 +37,49 @@ export default function App() {
   const [activeMatchDetail, setActiveMatchDetail] = useState<Match | null>(null);
   const [isPredictionsOpen, setIsPredictionsOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
+
+  // Custom UI Images & Background Configuration with localStorage persistence
+  const [themeConfig, setThemeConfig] = useState<CustomImageConfig>(() => {
+    try {
+      const saved = localStorage.getItem('chamcoso_custom_image_config');
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // Ignore parse/storage issues
+    }
+    return {
+      bannerImage: null,
+      bannerOverlayOpacity: 0.45,
+      appBgImage: null,
+      appBgOpacity: 0.15,
+      enableParticles: true
+    };
+  });
+
+  const handleSaveThemeConfig = (newConfig: CustomImageConfig) => {
+    setThemeConfig(newConfig);
+    try {
+      localStorage.setItem('chamcoso_custom_image_config', JSON.stringify(newConfig));
+    } catch (e) {
+      console.warn('Cannot persist custom theme to localStorage:', e);
+    }
+  };
+
+  const handleResetThemeDefault = () => {
+    const defaultConfig: CustomImageConfig = {
+      bannerImage: null,
+      bannerOverlayOpacity: 0.45,
+      appBgImage: null,
+      appBgOpacity: 0.15,
+      enableParticles: true
+    };
+    setThemeConfig(defaultConfig);
+    try {
+      localStorage.removeItem('chamcoso_custom_image_config');
+    } catch (e) {
+      console.warn('Cannot clear custom theme from localStorage:', e);
+    }
+  };
 
   // Notification leagues subscription
   const [subscribedLeagues, setSubscribedLeagues] = useState<LeagueId[]>([
@@ -223,12 +268,23 @@ export default function App() {
 
   return (
     <div
-      className={`min-h-screen transition-colors ${
+      className={`relative min-h-screen transition-colors ${
         isDarkMode
           ? 'bg-[#080d16] text-slate-100'
           : 'bg-[#f4f7fb] text-slate-900'
       }`}
     >
+      {/* Optional Customized Full-Page Wallpaper from User Files / Album */}
+      {themeConfig.appBgImage && (
+        <div
+          className="fixed inset-0 pointer-events-none z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-500"
+          style={{
+            backgroundImage: `url(${themeConfig.appBgImage})`,
+            opacity: themeConfig.appBgOpacity
+          }}
+        />
+      )}
+
       {/* Top Header Bar */}
       <Header
         activeTab={activeTab}
@@ -238,6 +294,7 @@ export default function App() {
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenPredictions={() => setIsPredictionsOpen(true)}
         onTriggerTestGoal={handleTriggerTestGoal}
+        onOpenCustomizer={() => setIsCustomizerOpen(true)}
         liveMatchCount={liveMatches.length}
       />
 
@@ -248,12 +305,15 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
         {/* Hero Pitch Visual Banner */}
         <HeroPitchBanner
           featuredMatch={featuredLiveMatch}
           onSelectMatch={(m) => setActiveMatchDetail(m)}
           onOpenHighlights={() => setActiveTab('highlights')}
+          customBannerImage={themeConfig.bannerImage}
+          bannerOverlayOpacity={themeConfig.bannerOverlayOpacity}
+          onOpenCustomizer={() => setIsCustomizerOpen(true)}
         />
 
         {/* View Switcher based on Active Tab */}
@@ -316,10 +376,10 @@ export default function App() {
       {/* Footer */}
       <footer className="mt-16 border-t border-slate-800/80 bg-[#060a12] py-8 text-center text-xs text-slate-400">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-200">CyberPitch Live</span>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <span className="font-extrabold text-slate-150 uppercase tracking-wider text-emerald-400">CHẠM CỎ SỐ</span>
             <span>·</span>
-            <span>Hệ Thống Tỉ Số & Thể Thao Số Thời Gian Thực</span>
+            <span>Chạm vào đam mê, sống cùng bóng đá</span>
             <span className="text-emerald-400 font-mono text-[11px] ml-1">● Tự động làm mới 30s</span>
           </div>
 
@@ -369,6 +429,15 @@ export default function App() {
           onToggleLeague={handleToggleSubscribedLeague}
         />
       )}
+
+      {/* Custom Theme / Image Customizer Modal (Computer Files & Phone Album) */}
+      <ThemeCustomizerModal
+        isOpen={isCustomizerOpen}
+        onClose={() => setIsCustomizerOpen(false)}
+        config={themeConfig}
+        onSaveConfig={handleSaveThemeConfig}
+        onResetDefault={handleResetThemeDefault}
+      />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Moon, Sun, Zap, Radio, Trophy, Search } from 'lucide-react';
+import { Bell, Moon, Sun, Zap, Radio, Trophy, Search, Image as ImageIcon } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: string;
@@ -9,6 +9,7 @@ interface HeaderProps {
   onOpenNotifications: () => void;
   onOpenPredictions: () => void;
   onTriggerTestGoal: () => void;
+  onOpenCustomizer?: () => void;
   liveMatchCount: number;
 }
 
@@ -20,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenNotifications,
   onOpenPredictions,
   onTriggerTestGoal,
+  onOpenCustomizer,
   liveMatchCount
 }) => {
   const navItems = [
@@ -37,19 +39,24 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => setActiveTab('scores')}
-            className="flex items-center gap-2.5 text-left focus:outline-none group"
+            className="flex items-center gap-2.5 sm:gap-3 text-left focus:outline-none group py-1"
           >
-            <div className="relative w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center overflow-hidden group-hover:border-emerald-400 transition-colors">
-              <span className="text-xl">⚽</span>
-              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-cyan-500/0 pointer-events-none" />
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 via-cyan-500/10 to-slate-900 border border-emerald-500/40 flex items-center justify-center overflow-hidden group-hover:border-emerald-400 transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+              <span className="text-xl group-hover:scale-110 transition-transform">⚽</span>
+              <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/25 to-cyan-500/0 pointer-events-none" />
             </div>
-            <div>
-              <span className="text-lg font-bold tracking-tight bg-gradient-to-r from-emerald-400 via-cyan-300 to-white bg-clip-text text-transparent">
-                CyberPitch
-              </span>
-              <span className="text-xs font-semibold text-emerald-400 ml-1.5 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 uppercase tracking-wider">
-                Live
-              </span>
+            <div className="flex flex-col justify-center">
+              <div className="flex items-center gap-1.5">
+                <span className="text-lg sm:text-xl font-black tracking-wider uppercase bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-200 bg-clip-text text-transparent drop-shadow-[0_1px_10px_rgba(16,185,129,0.3)]">
+                  CHẠM CỎ SỐ
+                </span>
+                <span className="inline-flex items-center text-[10px] font-extrabold text-emerald-400 px-1.5 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/40 uppercase tracking-widest">
+                  LIVE
+                </span>
+              </div>
+              <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium tracking-normal leading-tight group-hover:text-emerald-300/80 transition-colors">
+                Chạm vào đam mê, sống cùng bóng đá
+              </p>
             </div>
           </button>
         </div>
@@ -114,6 +121,17 @@ export const Header: React.FC<HeaderProps> = ({
             <Bell className="w-4 h-4" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#080d16]" />
           </button>
+
+          {/* Custom Theme / Image Customizer from PC or Phone */}
+          {onOpenCustomizer && (
+            <button
+              onClick={onOpenCustomizer}
+              title="Tùy biến hình ảnh giao diện từ máy tính hoặc album điện thoại"
+              className="p-2 text-slate-300 hover:text-emerald-400 hover:bg-slate-800/60 rounded-lg transition-colors relative"
+            >
+              <ImageIcon className="w-4 h-4" />
+            </button>
+          )}
 
           {/* Dark / Stadium Light Mode Toggle */}
           <button

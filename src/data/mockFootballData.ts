@@ -7,6 +7,9 @@ import {
   FriendRank,
   CommunityMessage
 } from '../types/football';
+import cyberHighlightImg from '../assets/images/cyber_match_highlight_1790513577902.jpg';
+import cyberCleatsImg from '../assets/images/cyber_pitch_cleats_hero_1790513556958.jpg';
+import cyberStadiumImg from '../assets/images/cyber_stadium_broadcast_1790513588901.jpg';
 
 export const LEAGUES_DATA: League[] = [
   {
@@ -98,7 +101,7 @@ export const HIGHLIGHTS_DATA: HighlightItem[] = [
     title: 'Highlights: Manchester City 2 - 1 Real Madrid | Siêu phẩm Foden nổ tung cầu trường',
     duration: '09:42',
     league: 'UEFA Champions League',
-    thumbnail: '/src/assets/images/cyber_match_highlight_1790513577902.jpg',
+    thumbnail: cyberHighlightImg,
     views: '2.4M lượt xem',
     date: 'Hôm nay',
     events: [
@@ -114,7 +117,7 @@ export const HIGHLIGHTS_DATA: HighlightItem[] = [
     title: 'Highlights: Arsenal 1 - 1 Liverpool | Đại chiến rực lửa tại Emirates',
     duration: '11:15',
     league: 'Premier League',
-    thumbnail: '/src/assets/images/cyber_pitch_cleats_hero_1790513556958.jpg',
+    thumbnail: cyberCleatsImg,
     views: '1.8M lượt xem',
     date: 'Hôm nay',
     events: [
@@ -129,7 +132,7 @@ export const HIGHLIGHTS_DATA: HighlightItem[] = [
     title: 'Highlights: Inter Milan 2 - 1 AC Milan | Derby rực lửa thành Milan',
     duration: '08:30',
     league: 'Serie A',
-    thumbnail: '/src/assets/images/cyber_stadium_broadcast_1790513588901.jpg',
+    thumbnail: cyberStadiumImg,
     views: '950K lượt xem',
     date: 'Hôm qua',
     events: [
