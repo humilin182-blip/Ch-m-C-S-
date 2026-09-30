@@ -1,5 +1,11 @@
 import { Match, MatchEvent, MatchStats, TeamStanding, LeagueId } from '../types/football';
 import { OCTOBER_2026_SCHEDULE } from '../data/october2026Schedule';
+import { PREMIER_LEAGUE_2026_SCHEDULE } from '../data/premierLeague2026Schedule';
+import { LALIGA_2026_SCHEDULE } from '../data/laliga2026Schedule';
+import { BUNDESLIGA_2026_SCHEDULE } from '../data/bundesliga2026Schedule';
+import { UCL_2026_SCHEDULE } from '../data/ucl2026Schedule';
+import { SERIEA_2026_SCHEDULE } from '../data/seriea2026Schedule';
+import { LIGUE1_2026_SCHEDULE } from '../data/ligue12026Schedule';
 
 export const LEAGUE_SLUG_MAP: Record<LeagueId, string> = {
   epl: 'eng.1',
@@ -699,6 +705,21 @@ function parseEspnMatch(event: any, leagueId: LeagueId): Match | null {
  * Fetch matches for a specific league
  */
 export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
+  // If Premier League requested, return the full authentic 2026 schedule (Round 6 through Round 18, Oct - Dec)
+  if (leagueId === 'epl') {
+    return PREMIER_LEAGUE_2026_SCHEDULE;
+  }
+
+  // If La Liga requested, return the full authentic 2026 schedule (Round 8 through Round 17, Oct - Dec)
+  if (leagueId === 'laliga') {
+    return LALIGA_2026_SCHEDULE;
+  }
+
+  // If Bundesliga requested, return the full authentic 2026 schedule (Round 5 through Round 15, Oct - Dec)
+  if (leagueId === 'bundesliga') {
+    return BUNDESLIGA_2026_SCHEDULE;
+  }
+
   // If Nations League requested, return the authentic October 2026 fixtures
   if (leagueId === 'unl') {
     const unlOct = OCTOBER_2026_SCHEDULE.filter((m) => m.leagueId === 'unl');
@@ -707,7 +728,17 @@ export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
 
   // If Champions League requested, return world-class UCL fixtures with real countdown
   if (leagueId === 'ucl') {
-    return WORLD_CLASS_UCL_FIXTURES;
+    return UCL_2026_SCHEDULE;
+  }
+
+  // If Serie A requested, return authentic 2026 schedule (Round 6 through Round 15, Oct - Dec)
+  if (leagueId === 'seriea') {
+    return SERIEA_2026_SCHEDULE;
+  }
+
+  // If Ligue 1 requested, return authentic 2026 schedule (Round 6 through Round 15, Oct - Dec)
+  if (leagueId === 'ligue1') {
+    return LIGUE1_2026_SCHEDULE;
   }
 
   const octMatchesForLeague = OCTOBER_2026_SCHEDULE.filter((m) => m.leagueId === leagueId);
@@ -752,16 +783,21 @@ export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
  * Fetch matches across all top leagues in parallel
  */
 export async function fetchAllLeaguesMatches(): Promise<Match[]> {
-  const otherLeagues: LeagueId[] = ['epl', 'laliga', 'bundesliga', 'seriea', 'ligue1'];
+  const otherLeagues: LeagueId[] = ['epl', 'laliga', 'bundesliga', 'ucl', 'seriea', 'ligue1'];
 
   const results = await Promise.allSettled(
     otherLeagues.map((lg) => fetchLeagueMatches(lg))
   );
 
-  // Combine October 2026 schedule, authentic Nations League matches, UCL fixtures
+  // Combine Premier League, La Liga, Bundesliga, Serie A, Ligue 1, UEFA Champions League, October 2026 schedule, authentic Nations League matches
   const allMatches: Match[] = [
-    ...OCTOBER_2026_SCHEDULE,
-    ...WORLD_CLASS_UCL_FIXTURES
+    ...PREMIER_LEAGUE_2026_SCHEDULE,
+    ...LALIGA_2026_SCHEDULE,
+    ...BUNDESLIGA_2026_SCHEDULE,
+    ...SERIEA_2026_SCHEDULE,
+    ...LIGUE1_2026_SCHEDULE,
+    ...UCL_2026_SCHEDULE,
+    ...OCTOBER_2026_SCHEDULE
   ];
 
   results.forEach((res) => {

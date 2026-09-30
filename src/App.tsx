@@ -320,20 +320,20 @@ export default function App() {
         {/* Quick Access Notification Bar for Newly Updated Schedule */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-cyan-950/70 border border-emerald-500/40 shadow-lg">
           <div className="flex items-center gap-3 text-left">
-            <span className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg shrink-0">
-              📅
+            <span className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg shrink-0">
+              🗓️
             </span>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-bold text-white">
-                  Đã cập nhật đầy đủ 54 trận đấu mới (01/10 - 11/10/2026)
+                  Lịch Cúp C1 Champions League, Ngoại Hạng Anh, La Liga & Bundesliga Đến Hết Năm 2026
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
-                  Mới
+                  Mới Nhất
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                Xem ngay tỉ số chung cuộc FT và danh sách cầu thủ ghi bàn kèm phút lập công cho từng trận đấu.
+                Đầy đủ C1 Matchday 2 - 6, EPL (Vòng 6 - 18), La Liga (Vòng 8 - 17) & Bundesliga (Vòng 5 - 15). Mọi trận chưa đá đều gắn nhãn <strong className="text-cyan-300 font-semibold">⏳ Chưa đá</strong> cùng đồng hồ đếm ngược trực tiếp từng giây (giờ Việt Nam GMT+7).
               </p>
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function App() {
                   : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 hover:scale-[1.02]'
               }`}
             >
-              <span>{activeTab === 'schedule' ? '✓ Đang xem lịch thi đấu' : '👉 Bấm xem ngay (54 trận)'}</span>
+              <span>{activeTab === 'schedule' ? '✓ Đang xem lịch thi đấu' : '👉 Xem Lịch Thi Đấu & Đếm Ngược'}</span>
             </button>
             {activeTab === 'schedule' && (
               <button

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Match, LeagueId } from '../types/football';
 import { LEAGUES_DATA } from '../data/mockFootballData';
-import { Calendar, CalendarPlus, Clock, MapPin, Download, Check, BarChart2, Search, Info } from 'lucide-react';
+import { Calendar, CalendarPlus, Clock, MapPin, Download, Check, BarChart2, Search, Info, Flame, Trophy } from 'lucide-react';
 import { getGoogleCalendarUrl, downloadMatchICS } from '../services/calendarExport';
 import { calculateMatchCountdown } from '../services/footballApi';
 
@@ -12,53 +12,79 @@ interface ScheduleSectionProps {
   onOpenPrediction: (match: Match) => void;
 }
 
-// Helper to partition matches into prompt-defined date phases
-export function getMatchDatePhase(match: Match): string {
-  const d = new Date(match.startTime);
-  const timeMs = d.getTime();
+export const TOP_CLUBS_FILTER = [
+  { id: 'all', name: 'Tất cả CLB' },
+  // Pháp (Ligue 1)
+  { id: 'psg', name: 'PSG', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/160.png' },
+  { id: 'marseille', name: 'Marseille', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/166.png' },
+  { id: 'lyon', name: 'Lyon', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/167.png' },
+  { id: 'monaco', name: 'Monaco', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/174.png' },
+  { id: 'lille', name: 'Lille OSC', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/164.png' },
+  { id: 'lens', name: 'RC Lens', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/177.png' },
+  { id: 'nice', name: 'OGC Nice', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/273.png' },
+  { id: 'parisfc', name: 'Paris FC', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/6835.png' },
+  // Ý (Serie A)
+  { id: 'inter', name: 'Inter Milan', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/110.png' },
+  { id: 'milan', name: 'AC Milan', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/103.png' },
+  { id: 'juve', name: 'Juventus', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/111.png' },
+  { id: 'napoli', name: 'Napoli', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/114.png' },
+  { id: 'roma', name: 'AS Roma', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/104.png' },
+  { id: 'lazio', name: 'Lazio', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/112.png' },
+  { id: 'atalanta', name: 'Atalanta', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/1255.png' },
+  { id: 'fiorentina', name: 'Fiorentina', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/109.png' },
+  // Cúp C1 & Châu Âu
+  { id: 'gal', name: 'Galatasaray', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/436.png' },
+  // Đức (Bundesliga)
+  { id: 'bay', name: 'Bayern Munich', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/132.png' },
+  { id: 'bvb', name: 'Dortmund', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/124.png' },
+  { id: 'lev', name: 'Leverkusen', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/131.png' },
+  { id: 'rbl', name: 'RB Leipzig', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/11420.png' },
+  { id: 'sge', name: 'Frankfurt', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/127.png' },
+  { id: 'vfb', name: 'Stuttgart', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/135.png' },
+  // Tây Ban Nha (La Liga)
+  { id: 'rma', name: 'Real Madrid', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/86.png' },
+  { id: 'bar', name: 'Barcelona', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/83.png' },
+  { id: 'atm', name: 'Atlético Madrid', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/1068.png' },
+  { id: 'ath', name: 'Athletic Bilbao', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/93.png' },
+  { id: 'rso', name: 'Real Sociedad', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/89.png' },
+  { id: 'bet', name: 'Real Betis', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/244.png' },
+  { id: 'sev', name: 'Sevilla', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/243.png' },
+  { id: 'val', name: 'Valencia', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/94.png' },
+  // Ngoại Hạng Anh (Premier League)
+  { id: 'ars', name: 'Arsenal', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/359.png' },
+  { id: 'mun', name: 'Man United', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/360.png' },
+  { id: 'liv', name: 'Liverpool', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/364.png' },
+  { id: 'mci', name: 'Man City', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/382.png' },
+  { id: 'che', name: 'Chelsea', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/363.png' },
+  { id: 'tot', name: 'Tottenham', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/367.png' },
+  { id: 'new', name: 'Newcastle', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/361.png' },
+  { id: 'avl', name: 'Aston Villa', logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/362.png' }
+];
 
-  // 01/10 18:00 to 02/10 06:00 (GMT+7)
-  const g1Start = new Date('2026-10-01T18:00:00+07:00').getTime();
-  const g1End = new Date('2026-10-02T06:00:00+07:00').getTime();
-  if (timeMs >= g1Start && timeMs <= g1End) return '2026-10-01';
-
-  // 02/10 18:00 to 03/10 06:00
-  const g2Start = new Date('2026-10-02T18:00:00+07:00').getTime();
-  const g2End = new Date('2026-10-03T06:00:00+07:00').getTime();
-  if (timeMs >= g2Start && timeMs <= g2End) return '2026-10-02';
-
-  // 03/10 18:00 to 04/10 06:00
-  const g3Start = new Date('2026-10-03T18:00:00+07:00').getTime();
-  const g3End = new Date('2026-10-04T06:00:00+07:00').getTime();
-  if (timeMs >= g3Start && timeMs <= g3End) return '2026-10-03';
-
-  // 04/10 18:00 to 05/10 06:00
-  const g4Start = new Date('2026-10-04T18:00:00+07:00').getTime();
-  const g4End = new Date('2026-10-05T06:00:00+07:00').getTime();
-  if (timeMs >= g4Start && timeMs <= g4End) return '2026-10-04';
-
-  // 05/10 18:00 to 06/10 06:00
-  const g5Start = new Date('2026-10-05T18:00:00+07:00').getTime();
-  const g5End = new Date('2026-10-06T06:00:00+07:00').getTime();
-  if (timeMs >= g5Start && timeMs <= g5End) return '2026-10-05';
-
-  // 09/10 đêm to 10/10 sáng (02:00, 02:30 sáng 10/10)
-  const g6Start = new Date('2026-10-09T20:00:00+07:00').getTime();
-  const g6End = new Date('2026-10-10T06:00:00+07:00').getTime();
-  if (timeMs >= g6Start && timeMs <= g6End) return '2026-10-09';
-
-  // 10/10 ban ngày & tối (18:30 đến 23:59)
-  const g7Start = new Date('2026-10-10T06:00:00+07:00').getTime();
-  const g7End = new Date('2026-10-10T23:59:59+07:00').getTime();
-  if (timeMs >= g7Start && timeMs <= g7End) return '2026-10-10';
-
-  // 10/10 đêm to 11/10 rạng sáng (02:00 sáng 11/10)
-  const g8Start = new Date('2026-10-11T00:00:00+07:00').getTime();
-  const g8End = new Date('2026-10-11T06:00:00+07:00').getTime();
-  if (timeMs >= g8Start && timeMs <= g8End) return '2026-10-11';
-
-  return 'other';
-}
+export const ROUNDS_PRESET = [
+  { id: 'all', label: 'Tất cả các vòng & lượt đấu' },
+  // Cúp C1 UEFA Champions League
+  { id: 'Matchday 2', label: '⭐ C1 Lượt 2 (14 - 15/10 Man City vs PSG, Arsenal vs Lille)' },
+  { id: 'Matchday 3', label: '⭐ C1 Lượt 3 (21 - 22/10 PSG vs Barca, Bayern vs Arsenal)' },
+  { id: 'Matchday 4', label: '⭐ C1 Lượt 4 (04 - 05/11 Atletico vs Bayern, Barca vs Villa)' },
+  { id: 'Matchday 5', label: '⭐ C1 Lượt 5 (25 - 26/11 Arsenal vs BVB, Real vs PSV)' },
+  { id: 'Matchday 6', label: '⭐ C1 Lượt 6 (09 - 10/12 Barca vs Man City, Arsenal vs Real)' },
+  // Các vòng giải VĐQG
+  { id: 'Vòng 5', label: 'Vòng 5 (10 - 11/10 Bundesliga)' },
+  { id: 'Vòng 6', label: 'Vòng 6 (10 - 13/10 Ligue 1 & Serie A mở màn, Lens vs Lyon)' },
+  { id: 'Vòng 7', label: 'Vòng 7 (17 - 20/10 Lyon vs Nice, Milan vs Atalanta, Juve vs Lazio)' },
+  { id: 'Vòng 8', label: '💥 Vòng 8 (Siêu đại chiến PSG vs Lyon, Der Klassiker, Napoli vs Roma)' },
+  { id: 'Vòng 9', label: 'Vòng 9 (31/10 Derby miền Bắc Lille vs Lens & Serie A giữa tuần)' },
+  { id: 'Vòng 10', label: '🔥 Vòng 10 (Lens vs Marseille, Derby Milan, Juve vs Napoli, El Clásico)' },
+  { id: 'Vòng 11', label: '🔥 Vòng 11 (21 - 23/11 Nice vs PSG, Lille vs Lyon, Napoli vs Inter)' },
+  { id: 'Vòng 12', label: '🔥 Vòng 12 (28 - 30/11 Choc des Olympiques Marseille vs Lyon, PSG vs Monaco, Juve vs Milan)' },
+  { id: 'Vòng 13', label: '🔥 Vòng 13 (05 - 07/12 Marseille vs Lille, Inter vs Torino, Bayern vs Leverkusen)' },
+  { id: 'Vòng 14', label: 'Vòng 14 (12 - 14/12 Siêu Derby thủ đô Paris: PSG vs Paris FC, Nice vs Marseille)' },
+  { id: 'Vòng 15', label: "🔥 Vòng 15 (20 - 23/12 Trước Giáng sinh: Le Classique Marseille vs PSG, Inter vs Juve)" },
+  { id: 'Vòng 16', label: '🔥 Vòng 16 (Atlético vs Valencia & Arsenal vs MU)' },
+  { id: 'Vòng 17', label: '🎄 Vòng 17 (Giáng Sinh La Liga & Boxing Day EPL)' },
+  { id: 'Vòng 18', label: '🎉 Vòng 18 (30 - 31/12 Chào Năm Mới 2027)' }
+];
 
 export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
   matches,
@@ -67,8 +93,10 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
   onOpenPrediction
 }) => {
   const [selectedLeague, setSelectedLeague] = useState<LeagueId | 'all'>('all');
-  const [selectedDateFilter, setSelectedDateFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'FINISHED' | 'SCHEDULED' | 'LIVE'>('ALL');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all'); // 'all' | '2026-10' | '2026-11' | '2026-12'
+  const [selectedRound, setSelectedRound] = useState<string>('all');
+  const [selectedClub, setSelectedClub] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'SCHEDULED' | 'FINISHED' | 'LIVE'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [syncedMatchId, setSyncedMatchId] = useState<string | null>(null);
   const [revealedMatchIds, setRevealedMatchIds] = useState<string[]>([]);
@@ -88,32 +116,35 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  const DATE_PRESETS = [
-    { id: 'all', label: 'Tất cả các ngày (01 - 11/10)' },
-    { id: '2026-10-01', label: '01/10 - 02/10 (Đức, Bồ Đào Nha...)' },
-    { id: '2026-10-02', label: '02/10 - 03/10 (Pháp vs Ý, Bỉ...)' },
-    { id: '2026-10-03', label: '03/10 - 04/10 (Croatia vs Anh...)' },
-    { id: '2026-10-04', label: '04/10 - 05/10 (Bồ Đào Nha vs Na Uy...)' },
-    { id: '2026-10-05', label: '05/10 - 06/10 (Ý vs Thổ Nhĩ Kỳ, Pháp...)' },
-    { id: 'rest', label: '07/10 - 08/10 (Nghỉ di chuyển)' },
-    { id: '2026-10-09', label: '09/10 - 10/10 (Dortmund, La Liga)' },
-    { id: '2026-10-10', label: '10/10 (Arsenal, Chelsea, MU vs Tot, Barca)' },
-    { id: '2026-10-11', label: '10/10 - 11/10 (Real Madrid vs Villarreal)' }
+  const MONTH_TABS = [
+    { id: 'all', label: 'Toàn bộ lịch (T10 · T11 · T12)', icon: '🗓️' },
+    { id: '2026-10', label: 'Tháng 10/2026 (Vòng 6 - 9)', icon: '🍂' },
+    { id: '2026-11', label: 'Tháng 11/2026 (Vòng 9 - 12)', icon: '🍁' },
+    { id: '2026-12', label: 'Tháng 12/2026 (Vòng 13 - 18 · Boxing Day)', icon: '🎄' }
   ];
 
   const filteredMatches = matches.filter((m) => {
     if (selectedLeague !== 'all' && m.leagueId !== selectedLeague) return false;
     if (statusFilter !== 'ALL' && m.status !== statusFilter) return false;
 
-    if (selectedDateFilter === 'rest') {
-      return false; // The rest period has no matches; displays notice banner below
+    // Filter by Month
+    if (selectedMonth !== 'all') {
+      if (!m.startTime.startsWith(selectedMonth)) return false;
     }
 
-    if (selectedDateFilter !== 'all') {
-      const phase = getMatchDatePhase(m);
-      if (phase !== selectedDateFilter) return false;
+    // Filter by Round
+    if (selectedRound !== 'all') {
+      if (!m.round.includes(selectedRound)) return false;
     }
 
+    // Filter by Club
+    if (selectedClub !== 'all') {
+      const isHome = m.homeTeam.id === selectedClub || m.homeTeam.name.toLowerCase().includes(selectedClub.toLowerCase());
+      const isAway = m.awayTeam.id === selectedClub || m.awayTeam.name.toLowerCase().includes(selectedClub.toLowerCase());
+      if (!isHome && !isAway) return false;
+    }
+
+    // Search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       const matchName = `${m.homeTeam.name} ${m.awayTeam.name} ${m.stadium} ${m.round}`.toLowerCase();
@@ -150,40 +181,83 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
     }
   };
 
+  // Scheduled count
+  const scheduledCount = matches.filter((m) => m.status === 'SCHEDULED').length;
+  const finishedCount = matches.filter((m) => m.status === 'FINISHED').length;
+
   return (
     <div className="space-y-6">
       {/* Header & Search */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-slate-900 via-[#0a1428] to-slate-900 border border-slate-800 shadow-xl">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-emerald-400" />
-            Lịch Thi Đấu & Kết Quả Chi Tiết (Tháng 10/2026)
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+              Cúp C1 · EPL · La Liga · Bundesliga · Serie A · Ligue 1
+            </span>
+            <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold text-xs uppercase tracking-wider">
+              Tháng 10 - 12/2026
+            </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-black text-white flex items-center gap-2 mt-1.5 tracking-tight">
+            <Calendar className="w-6 h-6 text-emerald-400" />
+            Lịch Thi Đấu & Kết Quả Chi Tiết Đến Hết Năm 2026
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Hiển thị chuẩn múi giờ <strong className="text-emerald-300">Asia/Saigon (GMT+7)</strong> · Tỉ số chung cuộc & danh sách cầu thủ ghi bàn theo phút
+          <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
+            Bao gồm đầy đủ cúp C1 Champions League, Premier League, La Liga, Bundesliga, Serie A & Ligue 1 (Vòng 6 đến 15). Giờ thi đấu chuẩn <strong className="text-emerald-300 font-mono">Asia/Saigon (GMT+7)</strong>. Tất cả trận đấu chưa diễn ra đều được gắn nhãn <strong className="text-cyan-300 font-semibold">⏳ Chưa đá</strong> cùng đồng hồ đếm ngược trực tiếp từng giây.
           </p>
         </div>
 
         {/* Search input for team, scorer or stadium */}
-        <div className="relative">
+        <div className="relative min-w-[280px]">
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Tìm theo tên đội, cầu thủ ghi bàn, SVĐ..."
-            className="w-full sm:w-72 bg-slate-900 border border-slate-700/80 rounded-lg pl-8 pr-3.5 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400"
+            placeholder="Tìm theo tên đội, cầu thủ, SVĐ..."
+            className="w-full bg-slate-950 border border-slate-700/80 rounded-xl pl-9 pr-3.5 py-2.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-400 shadow-inner"
           />
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
         </div>
       </div>
 
-      {/* Date & Status Filter Strips */}
-      <div className="space-y-2.5">
-        {/* Status Filter Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+      {/* Filter Toolbar */}
+      <div className="space-y-3.5 p-4 rounded-xl bg-[#09111e] border border-slate-800 shadow-lg">
+        {/* Row 1: Month Selector Tabs */}
+        <div>
+          <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Chọn tháng thi đấu:</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {MONTH_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => {
+                  setSelectedMonth(tab.id);
+                  if (tab.id !== 'all') setSelectedRound('all');
+                }}
+                className={`flex items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                  selectedMonth === tab.id
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-md shadow-emerald-500/25 scale-[1.01]'
+                    : 'bg-slate-900/90 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-800'
+                }`}
+              >
+                <span>{tab.icon}</span>
+                <span className="truncate">{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Row 2: Status Filter Pills */}
+        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/80">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mr-1 flex items-center gap-1">
+            <Clock className="w-3 h-3 text-cyan-400" />
+            <span>Trạng thái:</span>
+          </span>
           <button
             onClick={() => setStatusFilter('ALL')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg shrink-0 transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
               statusFilter === 'ALL'
                 ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
                 : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
@@ -192,60 +266,87 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
             Tất cả ({matches.length})
           </button>
           <button
+            onClick={() => setStatusFilter('SCHEDULED')}
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
+              statusFilter === 'SCHEDULED'
+                ? 'bg-cyan-500 text-slate-950 font-bold shadow-md shadow-cyan-500/20'
+                : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
+            }`}
+          >
+            <Clock className="w-3 h-3 text-cyan-400 animate-pulse" />
+            <span>⏳ Chưa đá & Đếm ngược ({scheduledCount})</span>
+          </button>
+          <button
             onClick={() => setStatusFilter('FINISHED')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg shrink-0 transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
               statusFilter === 'FINISHED'
                 ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
                 : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
             }`}
           >
-            🏁 Đã có kết quả & Cầu thủ ghi bàn ({matches.filter((m) => m.status === 'FINISHED').length})
-          </button>
-          <button
-            onClick={() => setStatusFilter('SCHEDULED')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg shrink-0 transition-all ${
-              statusFilter === 'SCHEDULED'
-                ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
-            }`}
-          >
-            ⏳ Sắp diễn ra ({matches.filter((m) => m.status === 'SCHEDULED').length})
+            <span>🏁</span>
+            <span>Đã kết thúc & Tỉ số FT ({finishedCount})</span>
           </button>
           <button
             onClick={() => setStatusFilter('LIVE')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg shrink-0 transition-all ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
               statusFilter === 'LIVE'
                 ? 'bg-rose-500 text-white font-bold shadow-md shadow-rose-500/20'
                 : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
             }`}
           >
-            🔴 Đang đá Live ({matches.filter((m) => m.status === 'LIVE').length})
+            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+            <span>Đang đá LIVE ({matches.filter((m) => m.status === 'LIVE').length})</span>
           </button>
         </div>
 
-        {/* Date Presets Strip */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          <span className="text-[11px] font-semibold text-slate-400 shrink-0 mr-1 flex items-center gap-1">
-            <Clock className="w-3 h-3 text-cyan-400" />
-            Lọc giai đoạn:
+        {/* Row 3: Round Presets (Vòng 6 - 18) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none pt-1 border-t border-slate-800/80">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+            <Trophy className="w-3 h-3 text-amber-400" />
+            <span>Vòng đấu:</span>
           </span>
-          {DATE_PRESETS.map((dp) => (
+          {ROUNDS_PRESET.map((rp) => (
             <button
-              key={dp.id}
-              onClick={() => setSelectedDateFilter(dp.id)}
+              key={rp.id}
+              onClick={() => setSelectedRound(rp.id)}
               className={`px-2.5 py-1 text-[11px] font-medium rounded-md shrink-0 transition-all ${
-                selectedDateFilter === dp.id
-                  ? 'bg-cyan-500 text-slate-950 font-bold shadow-sm'
+                selectedRound === rp.id
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
                   : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 border border-slate-800'
               }`}
             >
-              {dp.label}
+              {rp.label}
             </button>
           ))}
         </div>
 
-        {/* League selector filter */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        {/* Row 4: Club Quick Filter (Arsenal, MU, Liverpool, MC, Chelsea...) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none pt-1 border-t border-slate-800/80">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1 flex items-center gap-1">
+            <Flame className="w-3 h-3 text-rose-400" />
+            <span>Theo dõi CLB:</span>
+          </span>
+          {TOP_CLUBS_FILTER.map((club) => (
+            <button
+              key={club.id}
+              onClick={() => setSelectedClub(club.id)}
+              className={`flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium rounded-md shrink-0 transition-all ${
+                selectedClub === club.id
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                  : 'bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800'
+              }`}
+            >
+              {club.logo && (
+                <img src={club.logo} alt={club.name} className="w-3.5 h-3.5 object-contain rounded-full" />
+              )}
+              <span>{club.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Row 5: Tournament Selector */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none pt-1 border-t border-slate-800/80">
           <button
             onClick={() => setSelectedLeague('all')}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg shrink-0 transition-all ${
@@ -273,43 +374,90 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
         </div>
       </div>
 
-      {/* Official Rest Days Notice (07/10 - 08/10) */}
-      {(selectedDateFilter === 'all' || selectedDateFilter === 'rest') && (
+      {/* Contextual Notices */}
+      {selectedMonth === '2026-10' && (
         <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs flex items-center gap-3">
           <Info className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
-            <span className="font-bold text-amber-300">Giai đoạn từ ngày 07/10 đến 08/10/2026:</span>{' '}
-            Các giải đấu tạm nghỉ để các đội tuyển & CLB di chuyển chuẩn bị cho loạt trận giải VĐQG cuối tuần (Premier League, La Liga, Bundesliga).
+            <span className="font-bold text-amber-300">Tháng 10/2026:</span>{' '}
+            Bùng nổ với Ligue 1 Vòng 6 - 9 (<strong className="text-white font-bold">Siêu đại chiến PSG vs Lyon 26/10, Derby miền Bắc Lille vs Lens 31/10</strong>), Cúp C1 Matchday 2 & 3, Serie A trở lại từ 10/10 (<strong className="text-white font-bold">Milan vs Atalanta, Juve vs Lazio, Napoli vs Roma</strong>), và tâm điểm La Liga <strong className="text-white font-bold">🔥 Siêu kinh điển Barcelona vs Real Madrid (26/10)</strong>!
           </div>
         </div>
       )}
 
+      {selectedMonth === '2026-11' && (
+        <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/30 text-blue-200 text-xs flex items-center gap-3">
+          <Info className="w-5 h-5 text-blue-400 shrink-0" />
+          <div>
+            <span className="font-bold text-blue-300">Tháng 11/2026:</span>{' '}
+            Trận cầu đinh Ligue 1 <strong className="text-white font-bold">Nice vs PSG (21/11), Choc des Olympiques Marseille vs Lyon (29/11) & PSG vs Monaco</strong>, cùng với <strong className="text-white font-bold">🔥 Derby della Madonnina: AC Milan vs Inter Milan (01/11)</strong>, đại chiến nước Đức <strong className="text-white font-bold">💥 Der Klassiker: Bayern vs BVB</strong> và <strong className="text-white font-bold">Juventus vs AC Milan & Derby Lazio vs Roma (29/11)</strong>!
+          </div>
+        </div>
+      )}
+
+      {selectedMonth === '2026-12' && (
+        <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-200 text-xs flex items-center gap-3">
+          <Flame className="w-5 h-5 text-rose-400 shrink-0" />
+          <div>
+            <span className="font-bold text-rose-300">Tháng 12/2026 - Mùa Đông Nghẹt Thở:</span>{' '}
+            Siêu derby thủ đô nước Pháp <strong className="text-white font-bold">🔥 Paris Saint-Germain vs Paris FC (12/12)</strong>, đại chiến Le Classique <strong className="text-white font-bold">Marseille vs PSG (21/12) & Lyon vs Monaco</strong>, khép lại C1 Matchday 6, Derby d'Italia <strong className="text-white font-bold">Inter vs Juve</strong>, Revierderby Dortmund vs Schalke 04, và Boxing Day EPL!
+          </div>
+        </div>
+      )}
+
+      {/* Active Filter Summary Bar */}
+      <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+        <span>
+          Đang hiển thị <strong className="text-emerald-400">{filteredMatches.length}</strong> trận đấu
+          {selectedMonth !== 'all' && ` trong ${MONTH_TABS.find((t) => t.id === selectedMonth)?.label}`}
+          {selectedRound !== 'all' && ` · ${selectedRound}`}
+          {selectedClub !== 'all' && ` · CLB: ${TOP_CLUBS_FILTER.find((c) => c.id === selectedClub)?.name}`}
+        </span>
+        {(selectedMonth !== 'all' || selectedRound !== 'all' || selectedClub !== 'all' || searchTerm) && (
+          <button
+            onClick={() => {
+              setSelectedMonth('all');
+              setSelectedRound('all');
+              setSelectedClub('all');
+              setSearchTerm('');
+              setStatusFilter('ALL');
+              setSelectedLeague('all');
+            }}
+            className="text-xs text-cyan-400 hover:text-cyan-300 underline font-medium cursor-pointer"
+          >
+            Đặt lại tất cả bộ lọc
+          </button>
+        )}
+      </div>
+
       {/* Matches List */}
-      {filteredMatches.length === 0 && selectedDateFilter !== 'rest' ? (
+      {filteredMatches.length === 0 ? (
         <div className="p-12 text-center rounded-xl bg-[#09111e] border border-slate-800">
           <p className="text-slate-400 text-sm">Không tìm thấy trận đấu nào phù hợp với bộ lọc hiện tại.</p>
           <button
             onClick={() => {
               setSelectedLeague('all');
-              setSelectedDateFilter('all');
+              setSelectedMonth('all');
+              setSelectedRound('all');
+              setSelectedClub('all');
               setStatusFilter('ALL');
               setSearchTerm('');
             }}
-            className="mt-3 px-4 py-1.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10"
+            className="mt-3 px-4 py-1.5 text-xs font-semibold text-emerald-400 border border-emerald-500/30 rounded-lg hover:bg-emerald-500/10 cursor-pointer"
           >
-            Xem toàn bộ 54 trận đấu
+            Xem toàn bộ lịch thi đấu
           </button>
         </div>
       ) : (
-        <div className="space-y-3.5">
+        <div className="space-y-4">
           {filteredMatches.map((match) => {
-            const { timeStr, dateStr } = formatDateTime(match.startTime);
             const league = LEAGUES_DATA.find((l) => l.id === match.leagueId);
+            const { timeStr, dateStr } = formatDateTime(match.startTime);
+            const countdown = calculateMatchCountdown(match.startTime);
             const isLive = match.status === 'LIVE';
             const isFinished = match.status === 'FINISHED';
-            const countdown = calculateMatchCountdown(match.startTime);
 
-            // Separate goal events by home and away team
+            // Goal events for home and away
             const homeGoalEvents = match.events.filter(
               (e) =>
                 (e.team === 'home' && (e.type === 'GOAL' || e.type === 'PENALTY_GOAL')) ||
@@ -330,10 +478,10 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                 {/* Top Row: Date, League, Status Badge & Actions */}
                 <div className="flex flex-wrap items-center justify-between gap-2.5 pb-2.5 border-b border-slate-800/80">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm">{league?.flag}</span>
-                    <span className="text-xs font-bold text-slate-200">{league?.shortName}</span>
+                    <span className="text-sm">{league?.flag || '🏴󠁧󠁢󠁥󠁮󠁧󠁿'}</span>
+                    <span className="text-xs font-bold text-slate-200">{league?.shortName || 'Ngoại Hạng Anh'}</span>
                     <span className="text-slate-600 text-xs">·</span>
-                    <span className="text-xs text-slate-400 truncate max-w-[200px]">{match.round}</span>
+                    <span className="text-xs text-slate-400 truncate max-w-[240px]">{match.round}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -493,7 +641,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                       <div className="mt-2 p-2.5 rounded bg-slate-900/90 border border-slate-700/80 animate-in fade-in duration-200">
                         <div className="flex items-center justify-between mb-1.5 text-slate-300 font-bold text-[11px]">
                           <span>Dự kiến tỉ số sau trận: {match.homeTeam.name} {match.homeTeam.score} - {match.awayTeam.score} {match.awayTeam.name}</span>
-                          <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">Kết quả</span>
+                          <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">Kết quả</span>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-[11px]">
                           <div>
@@ -526,7 +674,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                   </div>
                 )}
 
-                {/* Prominent Goal Scorers Panel (Requirement: sau mỗi trận hiển thị tỉ số chung cuộc, tên cầu thủ ghi bàn của trận đấu đó ở phút bao nhiêu) */}
+                {/* Prominent Goal Scorers Panel when finished */}
                 {isFinished && (
                   <div className="mt-1 pt-2.5 pb-2 px-3.5 rounded-lg bg-slate-950/70 border border-slate-800/90 text-xs">
                     <div className="flex items-center justify-between mb-2">
@@ -639,7 +787,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                     {/* Download .ICS file */}
                     <button
                       onClick={() => handleDownloadICS(match)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer"
                       title="Tải file .ICS cho Apple Calendar / Outlook"
                     >
                       {syncedMatchId === match.id ? (
@@ -653,7 +801,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                     {/* Pre-Match Analysis */}
                     <button
                       onClick={() => onOpenAnalysis(match)}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
+                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer"
                       title="Xem nhận định chuyên gia"
                     >
                       Nhận định
@@ -668,4 +816,3 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
     </div>
   );
 };
-
