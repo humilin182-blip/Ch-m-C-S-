@@ -143,6 +143,31 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Mobile / Tablet Horizontal Navigation Strip */}
+      <div className="lg:hidden border-t border-slate-800/80 bg-[#070b13] px-3 py-1.5 overflow-x-auto scrollbar-none flex items-center gap-1.5">
+        {navItems.map((item) => {
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`px-3 py-1 text-xs font-semibold rounded-md whitespace-nowrap transition-colors shrink-0 ${
+                isActive
+                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-sm'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              {item.label}
+              {item.id === 'scores' && liveMatchCount > 0 && (
+                <span className="ml-1.5 px-1 py-0.2 text-[9px] font-bold bg-rose-500 text-white rounded-full">
+                  {liveMatchCount}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
     </header>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, Activity, Flame, BarChart2, Image as ImageIcon } from 'lucide-react';
+import { Sparkles, Activity, Flame, BarChart2, Image as ImageIcon, Calendar } from 'lucide-react';
 import { Match } from '../types/football';
 import cleatsHeroImg from '../assets/images/cyber_pitch_cleats_hero_1790513556958.jpg';
 
@@ -7,6 +7,7 @@ interface HeroPitchBannerProps {
   featuredMatch?: Match;
   onSelectMatch: (match: Match) => void;
   onOpenHighlights: () => void;
+  onOpenSchedule?: () => void;
   customBannerImage?: string | null;
   bannerOverlayOpacity?: number;
   onOpenCustomizer?: () => void;
@@ -16,6 +17,7 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
   featuredMatch,
   onSelectMatch,
   onOpenHighlights,
+  onOpenSchedule,
   customBannerImage,
   bannerOverlayOpacity = 0.45,
   onOpenCustomizer
@@ -223,6 +225,16 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
               >
                 <BarChart2 className="w-4 h-4" />
                 Xem Thống Kê · {featuredMatch.homeTeam.shortName} vs {featuredMatch.awayTeam.shortName}
+              </button>
+            )}
+
+            {onOpenSchedule && (
+              <button
+                onClick={onOpenSchedule}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/90 text-cyan-300 border border-cyan-500/50 font-bold text-sm transition-all hover:scale-[1.02] cursor-pointer backdrop-blur-sm shadow-md"
+              >
+                <Calendar className="w-4 h-4 text-cyan-400" />
+                Lịch Thi Đấu 10/2026 (54 Trận)
               </button>
             )}
 

@@ -1,4 +1,5 @@
 import { Match, MatchEvent, MatchStats, TeamStanding, LeagueId } from '../types/football';
+import { OCTOBER_2026_SCHEDULE } from '../data/october2026Schedule';
 
 export const LEAGUE_SLUG_MAP: Record<LeagueId, string> = {
   epl: 'eng.1',
@@ -49,36 +50,60 @@ export function calculateMatchCountdown(startTimeIso: string): {
   isLive: boolean;
   displayText: string;
   totalSeconds: number;
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  formattedCountdown: string;
 } {
   const now = Date.now();
   const target = new Date(startTimeIso).getTime();
   const diffMs = target - now;
 
   if (diffMs <= 0) {
-    return { isLive: true, displayText: 'Đang diễn ra (LIVE)', totalSeconds: 0 };
+    return {
+      isLive: true,
+      displayText: 'Đang diễn ra (LIVE)',
+      totalSeconds: 0,
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      seconds: 0,
+      formattedCountdown: '00:00:00'
+    };
   }
 
   const totalSeconds = Math.floor(diffMs / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
 
   const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
+  const formattedCountdown = `${days > 0 ? `${days}d ` : ''}${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 
-  if (hours >= 24) {
-    const days = Math.floor(hours / 24);
-    const remHours = hours % 24;
+  if (days > 0) {
     return {
       isLive: false,
-      displayText: `Còn ${days} ngày, ${pad(remHours)}:${pad(minutes)}:${pad(seconds)}`,
-      totalSeconds
+      displayText: `Còn ${days} ngày, ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
+      totalSeconds,
+      days,
+      hours,
+      minutes,
+      seconds,
+      formattedCountdown
     };
   }
 
   return {
     isLive: false,
     displayText: `Còn ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`,
-    totalSeconds
+    totalSeconds,
+    days: 0,
+    hours,
+    minutes,
+    seconds,
+    formattedCountdown
   };
 }
 
@@ -674,18 +699,21 @@ function parseEspnMatch(event: any, leagueId: LeagueId): Match | null {
  * Fetch matches for a specific league
  */
 export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
+  // If Nations League requested, return the authentic October 2026 fixtures
+  if (leagueId === 'unl') {
+    const unlOct = OCTOBER_2026_SCHEDULE.filter((m) => m.leagueId === 'unl');
+    return unlOct.length > 0 ? unlOct : getRealNationsLeagueFixtures();
+  }
+
   // If Champions League requested, return world-class UCL fixtures with real countdown
   if (leagueId === 'ucl') {
     return WORLD_CLASS_UCL_FIXTURES;
   }
 
-  // If Nations League requested, return the authentic real matches in Asia/Saigon
-  if (leagueId === 'unl') {
-    return getRealNationsLeagueFixtures();
-  }
+  const octMatchesForLeague = OCTOBER_2026_SCHEDULE.filter((m) => m.leagueId === leagueId);
 
   const slug = LEAGUE_SLUG_MAP[leagueId];
-  if (!slug) return [];
+  if (!slug) return octMatchesForLeague;
 
   try {
     const res = await fetch(`${ESPN_BASE_URL}/${slug}/scoreboard`, {
@@ -693,7 +721,7 @@ export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch ${slug} scoreboard`);
+      return octMatchesForLeague;
     }
 
     const data = await res.json();
@@ -705,10 +733,18 @@ export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
       if (parsed) matches.push(parsed);
     }
 
-    return matches;
+    // Merge October 2026 schedule
+    const existingIds = new Set(matches.map((m) => m.id));
+    for (const octM of octMatchesForLeague) {
+      if (!existingIds.has(octM.id)) {
+        matches.push(octM);
+      }
+    }
+
+    return matches.length > 0 ? matches : octMatchesForLeague;
   } catch (err) {
     console.error(`Error in fetchLeagueMatches for ${leagueId}:`, err);
-    return [];
+    return octMatchesForLeague;
   }
 }
 
@@ -722,19 +758,24 @@ export async function fetchAllLeaguesMatches(): Promise<Match[]> {
     otherLeagues.map((lg) => fetchLeagueMatches(lg))
   );
 
-  // Combine authentic Nations League matches, UCL fixtures, and major European leagues
+  // Combine October 2026 schedule, authentic Nations League matches, UCL fixtures
   const allMatches: Match[] = [
-    ...getRealNationsLeagueFixtures(),
+    ...OCTOBER_2026_SCHEDULE,
     ...WORLD_CLASS_UCL_FIXTURES
   ];
 
   results.forEach((res) => {
     if (res.status === 'fulfilled' && Array.isArray(res.value)) {
-      allMatches.push(...res.value);
+      const existingIds = new Set(allMatches.map((m) => m.id));
+      res.value.forEach((m) => {
+        if (!existingIds.has(m.id)) {
+          allMatches.push(m);
+        }
+      });
     }
   });
 
-  // Sort: LIVE matches first, then upcoming by start time, then finished
+  // Sort: LIVE matches first, then finished with results, then upcoming by start time
   return allMatches.sort((a, b) => {
     if (a.status === 'LIVE' && b.status !== 'LIVE') return -1;
     if (b.status === 'LIVE' && a.status !== 'LIVE') return 1;

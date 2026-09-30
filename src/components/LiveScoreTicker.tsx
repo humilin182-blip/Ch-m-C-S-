@@ -260,11 +260,11 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                       <div className="flex items-center gap-2">
                         {/* Countdown Badge: Còn X ngày, HH:MM:SS hoặc Còn HH:MM:SS */}
                         <div
-                          className="flex items-center gap-1 px-2 py-0.5 rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 text-xs font-mono font-bold tabular-nums shadow-sm"
+                          className="flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-cyan-950/70 border border-cyan-500/50 text-cyan-300 text-xs font-mono font-bold tabular-nums shadow-sm"
                           title={`Bắt đầu lúc ${formatLocalTime(match.startTime)} (${formatLocalDate(match.startTime)})`}
                         >
-                          <Clock className="w-3 h-3 text-cyan-400 animate-pulse" />
-                          <span>{countdown.displayText}</span>
+                          <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                          <span>⏳ Chưa đá · {countdown.displayText}</span>
                         </div>
                         <span className="text-[11px] font-medium text-slate-300 hidden sm:inline tabular-nums">
                           {formatLocalTime(match.startTime)} · {formatLocalDate(match.startTime)}
@@ -313,8 +313,8 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                         {match.homeTeam.name}
                       </span>
                     </div>
-                    <div className="text-lg font-mono font-extrabold text-white tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
-                      {match.status === 'SCHEDULED' ? '-' : match.homeTeam.score}
+                    <div className="text-sm font-mono font-bold text-slate-400 tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+                      {match.status === 'SCHEDULED' ? 'Chưa đá' : match.homeTeam.score}
                     </div>
                   </div>
 
@@ -337,24 +337,78 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                         {match.awayTeam.name}
                       </span>
                     </div>
-                    <div className="text-lg font-mono font-extrabold text-white tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
-                      {match.status === 'SCHEDULED' ? '-' : match.awayTeam.score}
+                    <div className="text-sm font-mono font-bold text-slate-400 tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+                      {match.status === 'SCHEDULED' ? 'Chưa đá' : match.awayTeam.score}
                     </div>
                   </div>
 
-                  {/* Goal Scorers Snippet */}
-                  {goalEvents.length > 0 && (
-                    <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-slate-400">
-                      {goalEvents.slice(0, 3).map((e) => (
-                        <span key={e.id} className="flex items-center gap-1">
+                  {/* For SCHEDULED matches: Countdown clock banner */}
+                  {match.status === 'SCHEDULED' && (
+                    <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                      <span className="text-cyan-300 flex items-center gap-1.5 font-medium">
+                        <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                        <span>Chưa đá · Đếm ngược đến giờ đấu:</span>
+                      </span>
+                      <span className="font-mono font-bold text-cyan-300 bg-cyan-950/70 border border-cyan-500/40 px-2 py-0.5 rounded tabular-nums shadow-sm">
+                        {countdown.displayText}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Final Score and Goal Scorers Snippet */}
+                  {match.status === 'FINISHED' && (
+                    <div className="mt-2.5 pt-2 border-t border-slate-800/80">
+                      <div className="flex items-center justify-between text-[11px] mb-1.5">
+                        <span className="font-semibold text-emerald-400 flex items-center gap-1">
                           <span>⚽</span>
-                          <span className="text-slate-300">{e.player}</span>
-                          <span className="text-emerald-400 tabular-nums">({e.minute}')</span>
+                          <span>Bàn thắng & Phút ghi bàn:</span>
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          Tỉ số chung cuộc: <strong className="text-white font-bold">{match.homeTeam.score} - {match.awayTeam.score} FT</strong>
+                        </span>
+                      </div>
+
+                      {goalEvents.length === 0 ? (
+                        <div className="text-[11px] text-slate-400 italic">Không có bàn thắng (0 - 0)</div>
+                      ) : (
+                        <div className="flex flex-wrap gap-1.5 text-[11px]">
+                          {goalEvents.map((e) => (
+                            <span
+                              key={e.id}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-200"
+                            >
+                              <span>⚽</span>
+                              <span className="font-semibold text-white">{e.player}</span>
+                              <span className="text-emerald-400 font-mono font-bold">
+                                {e.minute}'{e.extraMinute ? `+${e.extraMinute}'` : ''}
+                                {e.type === 'PENALTY_GOAL' ? ' (P)' : ''}
+                                {e.type === 'OWN_GOAL' ? ' (OG)' : ''}
+                              </span>
+                              <span className="text-slate-400 text-[10px]">
+                                ({e.team === 'home' ? match.homeTeam.shortName : match.awayTeam.shortName})
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* For LIVE matches with goals */}
+                  {isLive && goalEvents.length > 0 && (
+                    <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex flex-wrap gap-1.5 text-[11px] text-slate-300">
+                      {goalEvents.map((e) => (
+                        <span
+                          key={e.id}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-slate-200"
+                        >
+                          <span>⚽</span>
+                          <span className="font-semibold text-white">{e.player}</span>
+                          <span className="text-emerald-400 font-mono font-bold">
+                            {e.minute}'{e.extraMinute ? `+${e.extraMinute}'` : ''}
+                          </span>
                         </span>
                       ))}
-                      {goalEvents.length > 3 && (
-                        <span className="text-slate-500">+{goalEvents.length - 3} bàn khác</span>
-                      )}
                     </div>
                   )}
                 </div>

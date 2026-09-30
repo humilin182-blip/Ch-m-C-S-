@@ -311,10 +311,54 @@ export default function App() {
           featuredMatch={featuredLiveMatch}
           onSelectMatch={(m) => setActiveMatchDetail(m)}
           onOpenHighlights={() => setActiveTab('highlights')}
+          onOpenSchedule={() => setActiveTab('schedule')}
           customBannerImage={themeConfig.bannerImage}
           bannerOverlayOpacity={themeConfig.bannerOverlayOpacity}
           onOpenCustomizer={() => setIsCustomizerOpen(true)}
         />
+
+        {/* Quick Access Notification Bar for Newly Updated Schedule */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-cyan-950/70 border border-emerald-500/40 shadow-lg">
+          <div className="flex items-center gap-3 text-left">
+            <span className="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg shrink-0">
+              📅
+            </span>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-bold text-white">
+                  Đã cập nhật đầy đủ 54 trận đấu mới (01/10 - 11/10/2026)
+                </span>
+                <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
+                  Mới
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-300 mt-0.5">
+                Xem ngay tỉ số chung cuộc FT và danh sách cầu thủ ghi bàn kèm phút lập công cho từng trận đấu.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
+            <button
+              onClick={() => setActiveTab('schedule')}
+              className={`flex-1 sm:flex-initial px-4 py-2 rounded-lg font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-md ${
+                activeTab === 'schedule'
+                  ? 'bg-emerald-500 text-slate-950'
+                  : 'bg-emerald-500 hover:bg-emerald-400 text-slate-950 hover:scale-[1.02]'
+              }`}
+            >
+              <span>{activeTab === 'schedule' ? '✓ Đang xem lịch thi đấu' : '👉 Bấm xem ngay (54 trận)'}</span>
+            </button>
+            {activeTab === 'schedule' && (
+              <button
+                onClick={() => setActiveTab('scores')}
+                className="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+              >
+                Về trang chủ
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* View Switcher based on Active Tab */}
         {activeTab === 'scores' && (
