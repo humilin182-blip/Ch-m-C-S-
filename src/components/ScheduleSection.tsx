@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Match, LeagueId } from '../types/football';
-import { LEAGUES_DATA } from '../data/mockFootballData';
-import { Calendar, CalendarPlus, Clock, MapPin, Download, Check, BarChart2, Search, Info, Flame, Trophy } from 'lucide-react';
+import { Calendar, CalendarPlus, Clock, MapPin, Download, Check, BarChart2, Search, Info, Flame, Trophy, Edit3, Trash2 } from 'lucide-react';
 import { getGoogleCalendarUrl, downloadMatchICS } from '../services/calendarExport';
 import { calculateMatchCountdown } from '../services/footballApi';
+import { useAdmin } from '../context/AdminContext';
 
 interface ScheduleSectionProps {
   matches: Match[];
@@ -64,11 +64,11 @@ export const TOP_CLUBS_FILTER = [
 export const ROUNDS_PRESET = [
   { id: 'all', label: 'Tất cả các vòng & lượt đấu' },
   // Cúp C1 UEFA Champions League
-  { id: 'Matchday 2', label: '⭐ C1 Lượt 2 (14 - 15/10 Man City vs PSG, Arsenal vs Lille)' },
-  { id: 'Matchday 3', label: '⭐ C1 Lượt 3 (21 - 22/10 PSG vs Barca, Bayern vs Arsenal)' },
-  { id: 'Matchday 4', label: '⭐ C1 Lượt 4 (04 - 05/11 Atletico vs Bayern, Barca vs Villa)' },
-  { id: 'Matchday 5', label: '⭐ C1 Lượt 5 (25 - 26/11 Arsenal vs BVB, Real vs PSV)' },
-  { id: 'Matchday 6', label: '⭐ C1 Lượt 6 (09 - 10/12 Barca vs Man City, Arsenal vs Real)' },
+  { id: 'Matchday 2', label: '⭐ Champion leauge Lượt 2 (14 - 15/10 Man City vs PSG, Arsenal vs Lille)' },
+  { id: 'Matchday 3', label: '⭐ Champion leauge Lượt 3 (21 - 22/10 PSG vs Barca, Bayern vs Arsenal)' },
+  { id: 'Matchday 4', label: '⭐ Champion leauge Lượt 4 (04 - 05/11 Atletico vs Bayern, Barca vs Villa)' },
+  { id: 'Matchday 5', label: '⭐ Champion leauge Lượt 5 (25 - 26/11 Arsenal vs BVB, Real vs PSV)' },
+  { id: 'Matchday 6', label: '⭐ Champion leauge Lượt 6 (09 - 10/12 Barca vs Man City, Arsenal vs Real)' },
   // Các vòng giải VĐQG
   { id: 'Vòng 5', label: 'Vòng 5 (10 - 11/10 Bundesliga)' },
   { id: 'Vòng 6', label: 'Vòng 6 (10 - 13/10 Ligue 1 & Serie A mở màn, Lens vs Lyon)' },
@@ -92,7 +92,9 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
   onOpenAnalysis,
   onOpenPrediction
 }) => {
+  const { isAdmin, leagues, setEditingMatch, deleteMatch, deleteLeague, setIsAdminCenterOpen } = useAdmin();
   const [selectedLeague, setSelectedLeague] = useState<LeagueId | 'all'>('all');
+  const [deletingLeagueId, setDeletingLeagueId] = useState<string | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>('all'); // 'all' | '2026-10' | '2026-11' | '2026-12'
   const [selectedRound, setSelectedRound] = useState<string>('all');
   const [selectedClub, setSelectedClub] = useState<string>('all');
@@ -203,7 +205,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
             Lịch Thi Đấu & Kết Quả Chi Tiết Đến Hết Năm 2026
           </h2>
           <p className="text-xs text-slate-300 mt-1 max-w-2xl leading-relaxed">
-            Bao gồm đầy đủ cúp C1 Champions League, Premier League, La Liga, Bundesliga, Serie A & Ligue 1 (Vòng 6 đến 15). Giờ thi đấu chuẩn <strong className="text-emerald-300 font-mono">Asia/Saigon (GMT+7)</strong>. Tất cả trận đấu chưa diễn ra đều được gắn nhãn <strong className="text-cyan-300 font-semibold">⏳ Chưa đá</strong> cùng đồng hồ đếm ngược trực tiếp từng giây.
+            Bao gồm đầy đủ Champion leauge, Premier League, La Liga, Bundesliga, Serie A & Ligue 1 (Vòng 6 đến 15). Giờ thi đấu chuẩn <strong className="text-emerald-300 font-mono">Asia/Saigon (GMT+7)</strong>. Tất cả trận đấu chưa diễn ra đều được gắn nhãn <strong className="text-cyan-300 font-semibold">⏳ Chưa đá</strong> cùng đồng hồ đếm ngược trực tiếp từng giây.
           </p>
         </div>
 
@@ -357,20 +359,90 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
           >
             Tất cả giải đấu
           </button>
-          {LEAGUES_DATA.map((league) => (
+          {leagues.map((league) => {
+            const isSelected = selectedLeague === league.id;
+            const isConfirmingDelete = deletingLeagueId === league.id;
+
+            if (isConfirmingDelete) {
+              return (
+                <div
+                  key={league.id}
+                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg bg-rose-950/90 border border-rose-500 shadow-md shrink-0 animate-fadeIn"
+                >
+                  <span className="text-[11px] text-rose-200 font-semibold">Xóa {league.shortName}?</span>
+                  <button
+                    type="button"
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      await deleteLeague(league.id);
+                      setDeletingLeagueId(null);
+                      if (selectedLeague === league.id) setSelectedLeague('all');
+                    }}
+                    className="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold text-[10px] cursor-pointer"
+                  >
+                    Xóa ngay
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeletingLeagueId(null);
+                    }}
+                    className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={league.id}
+                className={`flex items-center rounded-lg shrink-0 transition-all ${
+                  isSelected
+                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                    : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSelectedLeague(league.id)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold cursor-pointer"
+                >
+                  <span>{league.flag}</span>
+                  <span>{league.shortName}</span>
+                </button>
+
+                {/* Direct Delete button for Admin */}
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeletingLeagueId(league.id);
+                    }}
+                    title={`Admin: Nhấn để xóa giải "${league.shortName}" trên toàn bộ hệ thống`}
+                    className="pr-2 pl-0.5 py-1 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3 h-3 hover:scale-110 text-rose-400/80 hover:text-rose-300" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Admin shortcut: ONLY if isAdmin (humilin182@gmail.com) */}
+          {isAdmin && (
             <button
-              key={league.id}
-              onClick={() => setSelectedLeague(league.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg shrink-0 transition-all ${
-                selectedLeague === league.id
-                  ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
-              }`}
+              onClick={() => setIsAdminCenterOpen(true)}
+              title="Mở bảng Quản Trị Viên (Thêm/Sửa/Xóa giải & trận)"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg shrink-0 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-sm ml-auto cursor-pointer"
             >
-              <span>{league.flag}</span>
-              <span>{league.shortName}</span>
+              <span>👑</span>
+              <span>+ Thêm Trận / Quản Trị</span>
             </button>
-          ))}
+          )}
         </div>
       </div>
 
@@ -380,7 +452,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
           <Info className="w-5 h-5 text-amber-400 shrink-0" />
           <div>
             <span className="font-bold text-amber-300">Tháng 10/2026:</span>{' '}
-            Bùng nổ với Ligue 1 Vòng 6 - 9 (<strong className="text-white font-bold">Siêu đại chiến PSG vs Lyon 26/10, Derby miền Bắc Lille vs Lens 31/10</strong>), Cúp C1 Matchday 2 & 3, Serie A trở lại từ 10/10 (<strong className="text-white font-bold">Milan vs Atalanta, Juve vs Lazio, Napoli vs Roma</strong>), và tâm điểm La Liga <strong className="text-white font-bold">🔥 Siêu kinh điển Barcelona vs Real Madrid (26/10)</strong>!
+            Bùng nổ với Ligue 1 Vòng 6 - 9 (<strong className="text-white font-bold">Siêu đại chiến PSG vs Lyon 26/10, Derby miền Bắc Lille vs Lens 31/10</strong>), Champion leauge Matchday 2 & 3, Serie A trở lại từ 10/10 (<strong className="text-white font-bold">Milan vs Atalanta, Juve vs Lazio, Napoli vs Roma</strong>), và tâm điểm La Liga <strong className="text-white font-bold">🔥 Siêu kinh điển Barcelona vs Real Madrid (26/10)</strong>!
           </div>
         </div>
       )}
@@ -400,7 +472,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
           <Flame className="w-5 h-5 text-rose-400 shrink-0" />
           <div>
             <span className="font-bold text-rose-300">Tháng 12/2026 - Mùa Đông Nghẹt Thở:</span>{' '}
-            Siêu derby thủ đô nước Pháp <strong className="text-white font-bold">🔥 Paris Saint-Germain vs Paris FC (12/12)</strong>, đại chiến Le Classique <strong className="text-white font-bold">Marseille vs PSG (21/12) & Lyon vs Monaco</strong>, khép lại C1 Matchday 6, Derby d'Italia <strong className="text-white font-bold">Inter vs Juve</strong>, Revierderby Dortmund vs Schalke 04, và Boxing Day EPL!
+            Siêu derby thủ đô nước Pháp <strong className="text-white font-bold">🔥 Paris Saint-Germain vs Paris FC (12/12)</strong>, đại chiến Le Classique <strong className="text-white font-bold">Marseille vs PSG (21/12) & Lyon vs Monaco</strong>, khép lại Champion leauge Matchday 6, Derby d'Italia <strong className="text-white font-bold">Inter vs Juve</strong>, Revierderby Dortmund vs Schalke 04, và Boxing Day EPL!
           </div>
         </div>
       )}
@@ -451,7 +523,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
       ) : (
         <div className="space-y-4">
           {filteredMatches.map((match) => {
-            const league = LEAGUES_DATA.find((l) => l.id === match.leagueId);
+            const league = leagues.find((l) => l.id === match.leagueId);
             const { timeStr, dateStr } = formatDateTime(match.startTime);
             const countdown = calculateMatchCountdown(match.startTime);
             const isLive = match.status === 'LIVE';
@@ -763,6 +835,30 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                   </div>
 
                   <div className="flex items-center gap-1.5">
+                    {/* Admin Actions */}
+                    {isAdmin && (
+                      <div className="flex items-center gap-1 mr-1 pr-1.5 border-r border-slate-700/60">
+                        <button
+                          onClick={() => setEditingMatch(match)}
+                          title="Admin: Chỉnh sửa trận này"
+                          className="flex items-center gap-1 px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold cursor-pointer"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                          <span>Sửa</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            deleteMatch(match.id);
+                          }}
+                          title="Admin: Xóa trận này (đồng bộ toàn bộ máy chủ)"
+                          className="flex items-center gap-1 px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold cursor-pointer"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          <span>Xóa</span>
+                        </button>
+                      </div>
+                    )}
+
                     {/* View Stats Button */}
                     <button
                       onClick={() => onSelectMatch(match)}

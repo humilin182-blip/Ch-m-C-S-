@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Match, CommunityMessage } from '../types/football';
-import { X, Play, Clock, Shield, Users, MessageSquare, Send, ThumbsUp, Flame } from 'lucide-react';
+import { X, Play, Clock, Shield, Users, MessageSquare, Send, ThumbsUp, Flame, Edit3, Trash2 } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
 
 interface MatchDetailModalProps {
   match: Match | null;
@@ -15,6 +16,7 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
   communityMessages,
   onSendMessage
 }) => {
+  const { isAdmin, setEditingMatch, deleteMatch } = useAdmin();
   const [activeTab, setActiveTab] = useState<'timeline' | 'stats' | 'lineups' | 'chat'>('timeline');
   const [chatInput, setChatInput] = useState('');
   const [selectedFanTeam, setSelectedFanTeam] = useState<string>('');
@@ -46,6 +48,34 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {isAdmin && (
+              <div className="flex items-center gap-1.5 mr-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingMatch(match);
+                    onClose();
+                  }}
+                  title="Admin: Chỉnh sửa trận đấu này"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold transition-all cursor-pointer"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>Sửa trận</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    deleteMatch(match.id);
+                    onClose();
+                  }}
+                  title="Admin: Xóa trận đấu này (đồng bộ toàn bộ máy chủ)"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold transition-all cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Xóa</span>
+                </button>
+              </div>
+            )}
             <button
               onClick={onClose}
               className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Bell, Moon, Sun, Zap, Radio, Trophy, Search, Image as ImageIcon } from 'lucide-react';
+import { Bell, Moon, Sun, Zap, Radio, Trophy, Search, Image as ImageIcon, User, ShieldCheck } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
 
 interface HeaderProps {
   activeTab: string;
@@ -10,6 +11,8 @@ interface HeaderProps {
   onOpenPredictions: () => void;
   onTriggerTestGoal: () => void;
   onOpenCustomizer?: () => void;
+  onOpenAdmin?: () => void;
+  onOpenAuth?: () => void;
   liveMatchCount: number;
 }
 
@@ -22,8 +25,11 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenPredictions,
   onTriggerTestGoal,
   onOpenCustomizer,
+  onOpenAdmin,
+  onOpenAuth,
   liveMatchCount
 }) => {
+  const { currentUser, isAdmin } = useAdmin();
   const navItems = [
     { id: 'scores', label: 'Tỉ số & Trận đấu' },
     { id: 'schedule', label: 'Lịch thi đấu' },
@@ -92,6 +98,57 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: 1-2 primary actions */}
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          {/* Admin Control Center button: EXCLUSIVELY for humilin182@gmail.com */}
+          {isAdmin && onOpenAdmin && (
+            <button
+              onClick={onOpenAdmin}
+              title="Mở Bảng Quản Trị (Thêm trận, Sửa trận, Xóa trận, Quản lý/Xóa giải đấu)"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 rounded-lg hover:bg-amber-500/30 transition-all cursor-pointer shadow-sm"
+            >
+              <span className="text-sm">👑</span>
+              <span>Quản Trị</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            </button>
+          )}
+
+          {/* Account Profile / Login button */}
+          {onOpenAuth && (
+            <button
+              onClick={onOpenAuth}
+              title={
+                currentUser
+                  ? isAdmin
+                    ? `Quản trị viên: ${currentUser.email}`
+                    : `Tài khoản: ${currentUser.email}`
+                  : 'Đăng nhập'
+              }
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs transition-all cursor-pointer ${
+                isAdmin
+                  ? 'bg-amber-500/15 border-amber-500/40 text-amber-200 hover:bg-amber-500/25'
+                  : 'bg-slate-900/90 hover:bg-slate-850 border-slate-700/80 text-slate-200'
+              }`}
+            >
+              {currentUser ? (
+                <>
+                  <img
+                    src={currentUser.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=64&q=80'}
+                    alt="avatar"
+                    className="w-4 h-4 rounded-full object-cover"
+                  />
+                  {isAdmin && <span className="text-amber-400 font-bold">👑</span>}
+                  <span className="font-mono text-[11px] truncate max-w-[120px] sm:max-w-[150px]">
+                    {currentUser.email}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <User className="w-3.5 h-3.5 text-emerald-400" />
+                  <span className="text-emerald-400 font-bold">Đăng nhập</span>
+                </>
+              )}
+            </button>
+          )}
+
           {/* Goal alert test simulation button */}
           <button
             onClick={onTriggerTestGoal}

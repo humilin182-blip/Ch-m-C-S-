@@ -1,0 +1,81 @@
+{
+  "leagues": [
+    {
+      "id": "ucl",
+      "name": "Champion leauge",
+      "shortName": "Champion leauge",
+      "country": "Châu Âu",
+      "logo": "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=80&q=80",
+      "flag": "⭐",
+      "color": "#0e1e5b",
+      "season": "2026/2027"
+    },
+    {
+      "id": "unl",
+      "name": "UEFA Nations League",
+      "shortName": "Nations League",
+      "country": "Châu Âu",
+      "logo": "https://images.unsplash.com/photo-1522778119026-d647f0596c20?auto=format&fit=crop&w=80&q=80",
+      "flag": "🇪🇺",
+      "color": "#003399",
+      "season": "2026/2027"
+    },
+    {
+      "id": "epl",
+      "name": "Premier League",
+      "shortName": "Ngoại Hạng Anh",
+      "country": "Anh",
+      "logo": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=80&q=80",
+      "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+      "color": "#3d195b",
+      "season": "2026/2027"
+    },
+    {
+      "id": "laliga",
+      "name": "La Liga EA Sports",
+      "shortName": "La Liga",
+      "country": "Tây Ban Nha",
+      "logo": "https://images.unsplash.com/photo-1518091043644-c1d4457512c6?auto=format&fit=crop&w=80&q=80",
+      "flag": "🇪🇸",
+      "color": "#ee1526",
+      "season": "2026/2027"
+    },
+    {
+      "id": "bundesliga",
+      "name": "Bundesliga",
+      "shortName": "Bundesliga",
+      "country": "Đức",
+      "logo": "https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=80&q=80",
+      "flag": "🇩🇪",
+      "color": "#d20515",
+      "season": "2026/2027"
+    },
+    {
+      "id": "seriea",
+      "name": "Serie A TIM",
+      "shortName": "Serie A",
+      "country": "Ý",
+      "logo": "https://images.unsplash.com/photo-1517466787929-bc90951d0974?auto=format&fit=crop&w=80&q=80",
+      "flag": "🇮🇹",
+      "color": "#024494",
+      "season": "2026/2027"
+    },
+    {
+      "id": "ligue1",
+      "name": "Ligue 1 McDonald's",
+      "shortName": "Ligue 1",
+      "country": "Pháp",
+      "logo": "https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=80&q=80",
+      "flag": "🇫🇷",
+      "color": "#091c3e",
+      "season": "2026/2027"
+    }
+  ],
+  "deletedLeagueIds": [
+    "vleague"
+  ],
+  "customMatches": [],
+  "editedMatches": {},
+  "deletedMatchIds": [],
+  "lastUpdated": 1790858800000
+}

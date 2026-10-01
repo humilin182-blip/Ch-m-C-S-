@@ -20,6 +20,10 @@ import { ThemeCustomizerModal } from './components/ThemeCustomizerModal';
 import { CustomImageConfig } from './types/theme';
 import { GoalAlertBanner, GoalAlertData } from './components/GoalAlertBanner';
 import { RefreshCw } from 'lucide-react';
+import { useAdmin } from './context/AdminContext';
+import { AdminCenterModal } from './components/AdminCenterModal';
+import { EditMatchModal } from './components/EditMatchModal';
+import { AuthModal } from './components/AuthModal';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('scores');
@@ -263,8 +267,20 @@ export default function App() {
     setCommunityMessages((prev) => [newMsg, ...prev]);
   };
 
-  const liveMatches = matches.filter((m) => m.status === 'LIVE');
-  const featuredLiveMatch = liveMatches[0] || matches[0];
+  const {
+    isAdmin,
+    processMatchesWithAdmin,
+    isAdminCenterOpen,
+    setIsAdminCenterOpen,
+    editingMatch,
+    setEditingMatch,
+    isAuthModalOpen,
+    setIsAuthModalOpen
+  } = useAdmin();
+
+  const displayMatches = processMatchesWithAdmin(matches);
+  const liveMatches = displayMatches.filter((m) => m.status === 'LIVE');
+  const featuredLiveMatch = liveMatches[0] || displayMatches[0];
 
   return (
     <div
@@ -295,6 +311,8 @@ export default function App() {
         onOpenPredictions={() => setIsPredictionsOpen(true)}
         onTriggerTestGoal={handleTriggerTestGoal}
         onOpenCustomizer={() => setIsCustomizerOpen(true)}
+        onOpenAdmin={() => setIsAdminCenterOpen(true)}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
         liveMatchCount={liveMatches.length}
       />
 
@@ -326,7 +344,7 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-bold text-white">
-                  Lịch Cúp C1 Champions League, Ngoại Hạng Anh, La Liga & Bundesliga Đến Hết Năm 2026
+                  Lịch Champion leauge, Ngoại Hạng Anh, La Liga, Bundesliga, Serie A & Ligue 1 Đến Hết Năm 2026
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
                   Mới Nhất
@@ -363,19 +381,19 @@ export default function App() {
         {/* View Switcher based on Active Tab */}
         {activeTab === 'scores' && (
           <>
-            {isLoadingMatches && matches.length === 0 ? (
+            {isLoadingMatches && displayMatches.length === 0 ? (
               <div className="p-16 rounded-2xl bg-[#09111e] border border-slate-800 text-center space-y-4">
                 <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin mx-auto" />
                 <h3 className="text-sm font-bold text-white">
                   Đang đồng bộ tỉ số trực tiếp từ Football API...
                 </h3>
                 <p className="text-xs text-slate-400">
-                  Lấy dữ liệu thời gian thực các giải đấu Nations League, Champions League, Premier League, La Liga...
+                  Lấy dữ liệu thời gian thực các giải đấu Champion leauge, Premier League, La Liga, Serie A, Bundesliga...
                 </p>
               </div>
             ) : (
               <LiveScoreTicker
-                matches={matches}
+                matches={displayMatches}
                 selectedLeague={selectedLeague}
                 setSelectedLeague={setSelectedLeague}
                 statusFilter={statusFilter}
@@ -396,7 +414,7 @@ export default function App() {
 
         {activeTab === 'schedule' && (
           <ScheduleSection
-            matches={matches}
+            matches={displayMatches}
             onSelectMatch={(m) => setActiveMatchDetail(m)}
             onOpenAnalysis={() => setActiveTab('analysis')}
             onOpenPrediction={() => setIsPredictionsOpen(true)}
@@ -412,7 +430,7 @@ export default function App() {
         {activeTab === 'analysis' && (
           <ExpertAnalysisSection
             onSelectMatch={(m) => setActiveMatchDetail(m)}
-            matches={matches}
+            matches={displayMatches}
           />
         )}
       </main>
@@ -428,9 +446,7 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4 text-[11px] text-slate-400">
-            <span>UEFA Champions League</span>
-            <span>·</span>
-            <span>Nations League</span>
+            <span>Champion leauge</span>
             <span>·</span>
             <span>Premier League</span>
             <span>·</span>
@@ -439,6 +455,8 @@ export default function App() {
             <span>Bundesliga</span>
             <span>·</span>
             <span>Serie A</span>
+            <span>·</span>
+            <span>Ligue 1</span>
           </div>
 
           <div className="text-[11px] text-slate-400">
@@ -460,7 +478,7 @@ export default function App() {
       {/* Prediction Tournament Mini-Game Modal */}
       {isPredictionsOpen && (
         <PredictionGameModal
-          matches={matches}
+          matches={displayMatches}
           onClose={() => setIsPredictionsOpen(false)}
         />
       )}
@@ -481,6 +499,25 @@ export default function App() {
         config={themeConfig}
         onSaveConfig={handleSaveThemeConfig}
         onResetDefault={handleResetThemeDefault}
+      />
+
+      {/* Admin Center Modal (Thêm trận, Sửa trận, Xóa trận, Thêm/Xóa/Đổi tên giải đấu) */}
+      <AdminCenterModal
+        isOpen={isAdminCenterOpen}
+        onClose={() => setIsAdminCenterOpen(false)}
+        matches={displayMatches}
+      />
+
+      {/* Dedicated Quick Edit Match Modal */}
+      <EditMatchModal
+        match={editingMatch}
+        onClose={() => setEditingMatch(null)}
+      />
+
+      {/* Account Authentication & Admin Role Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </div>
   );

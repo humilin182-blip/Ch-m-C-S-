@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Match, LeagueId } from '../types/football';
-import { LEAGUES_DATA } from '../data/mockFootballData';
-import { Star, CalendarPlus, ChevronRight, BarChart2, Video, Clock, BookOpen } from 'lucide-react';
+import { Star, CalendarPlus, ChevronRight, BarChart2, Video, Clock, BookOpen, Plus, Edit3, Trash2, Shield } from 'lucide-react';
 import { getGoogleCalendarUrl, downloadMatchICS } from '../services/calendarExport';
 import { calculateMatchCountdown } from '../services/footballApi';
+import { useAdmin } from '../context/AdminContext';
 
 interface LiveScoreTickerProps {
   matches: Match[];
@@ -40,6 +40,8 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
 }) => {
   const [calendarMenuOpen, setCalendarMenuOpen] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  const [deletingLeagueId, setDeletingLeagueId] = useState<string | null>(null);
+  const { isAdmin, leagues, setEditingMatch, deleteMatch, deleteLeague, setIsAdminCenterOpen } = useAdmin();
 
   // Live countdown per-second tick
   useEffect(() => {
@@ -112,33 +114,102 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
           🌍 Tất cả giải đấu ({matches.length})
         </button>
 
-        {LEAGUES_DATA.map((league) => {
+        {leagues.map((league) => {
           const count = matches.filter((m) => m.leagueId === league.id).length;
           const isSelected = selectedLeague === league.id;
+          const isConfirmingDelete = deletingLeagueId === league.id;
+
+          if (isConfirmingDelete) {
+            return (
+              <div
+                key={league.id}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg bg-rose-950/90 border border-rose-500 shadow-md shrink-0 animate-fadeIn"
+              >
+                <span className="text-[11px] text-rose-200 font-semibold">Xóa vĩnh viễn {league.shortName}?</span>
+                <button
+                  type="button"
+                  onClick={async (e) => {
+                    e.stopPropagation();
+                    await deleteLeague(league.id);
+                    setDeletingLeagueId(null);
+                    if (selectedLeague === league.id) setSelectedLeague('all');
+                  }}
+                  className="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white font-bold text-[10px] cursor-pointer"
+                >
+                  Xóa ngay
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeletingLeagueId(null);
+                  }}
+                  className="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px] cursor-pointer"
+                >
+                  Hủy
+                </button>
+              </div>
+            );
+          }
+
           return (
-            <button
+            <div
               key={league.id}
-              onClick={() => setSelectedLeague(league.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all shrink-0 ${
+              className={`flex items-center rounded-lg transition-all shrink-0 ${
                 isSelected
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
+                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20 font-bold'
                   : 'bg-slate-850 text-slate-300 hover:text-white hover:bg-slate-800 border border-slate-700/60'
               }`}
             >
-              <span>{league.flag}</span>
-              <span>{league.shortName}</span>
-              {count > 0 && (
-                <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                    isSelected ? 'bg-black/20 text-slate-950' : 'bg-slate-700 text-slate-300'
-                  }`}
+              <button
+                type="button"
+                onClick={() => setSelectedLeague(league.id)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold cursor-pointer"
+              >
+                <span>{league.flag}</span>
+                <span>{league.shortName}</span>
+                {count > 0 && (
+                  <span
+                    className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                      isSelected ? 'bg-black/20 text-slate-950' : 'bg-slate-700 text-slate-300'
+                    }`}
+                  >
+                    {count}
+                  </span>
+                )}
+              </button>
+
+              {/* Direct Delete button for Admin (humilin182@gmail.com) */}
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeletingLeagueId(league.id);
+                  }}
+                  title={`Admin: Nhấn để xóa giải "${league.shortName}" trên toàn bộ hệ thống`}
+                  className="pr-2 pl-0.5 py-1 text-slate-400 hover:text-rose-400 transition-colors cursor-pointer"
                 >
-                  {count}
-                </span>
+                  <Trash2 className="w-3 h-3 hover:scale-110 text-rose-400/80 hover:text-rose-300" />
+                </button>
               )}
-            </button>
+            </div>
           );
         })}
+
+        {/* Admin Quick Action Button on League Bar: ONLY if isAdmin (humilin182@gmail.com) */}
+        {isAdmin && (
+          <div className="ml-auto shrink-0 flex items-center gap-2">
+            <button
+              onClick={() => setIsAdminCenterOpen(true)}
+              title="Admin: Thêm trận, sửa trận, thêm/xóa giải đấu"
+              className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 shadow-sm transition-all cursor-pointer whitespace-nowrap"
+            >
+              <span className="text-sm">👑</span>
+              <span>+ Thêm Trận / Quản Trị</span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Status Segmented Filter */}
@@ -221,7 +292,12 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
           {filteredMatches.map((match) => {
             const isFav = favorites.includes(match.id);
             const isLive = match.status === 'LIVE';
-            const league = LEAGUES_DATA.find((l) => l.id === match.leagueId);
+            const league = leagues.find((l) => l.id === match.leagueId) || {
+              id: match.leagueId,
+              name: match.round,
+              shortName: match.round,
+              flag: '⚽'
+            };
 
             // Real-time Countdown calculation for scheduled games
             const countdown = calculateMatchCountdown(match.startTime);
@@ -273,6 +349,34 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                     ) : (
                       <div className="text-xs font-medium text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded">
                         Đã kết thúc
+                      </div>
+                    )}
+
+                    {/* Admin Actions on Match Card */}
+                    {isAdmin && (
+                      <div className="flex items-center gap-1 ml-1 pl-1.5 border-l border-slate-700/60">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingMatch(match);
+                          }}
+                          title="Admin: Chỉnh sửa trận đấu này"
+                          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] font-bold cursor-pointer transition-all"
+                        >
+                          <Edit3 className="w-2.5 h-2.5" />
+                          <span>Sửa</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteMatch(match.id);
+                          }}
+                          title="Admin: Xóa trận đấu này (đồng bộ toàn bộ máy chủ)"
+                          className="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-[10px] font-bold cursor-pointer transition-all"
+                        >
+                          <Trash2 className="w-2.5 h-2.5" />
+                          <span>Xóa</span>
+                        </button>
                       </div>
                     )}
 

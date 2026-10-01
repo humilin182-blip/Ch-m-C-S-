@@ -14,8 +14,8 @@ import cyberStadiumImg from '../assets/images/cyber_stadium_broadcast_1790513588
 export const LEAGUES_DATA: League[] = [
   {
     id: 'ucl',
-    name: 'UEFA Champions League',
-    shortName: 'UCL',
+    name: 'Champion leauge',
+    shortName: 'Champion leauge',
     country: 'Châu Âu',
     logo: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=80&q=80',
     flag: '⭐',

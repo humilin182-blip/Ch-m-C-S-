@@ -212,7 +212,7 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
           </h1>
 
           <p className="text-sm sm:text-base text-slate-300 line-clamp-2 sm:line-clamp-none mb-5 text-balance">
-            Cập nhật tức thời UEFA Champions League, Nations League, Premier League, La Liga, V-League...
+            Cập nhật tức thời Champion leauge, Nations League, Premier League, La Liga, V-League...
             Báo bàn thắng rung chuông tức thì, đồng hồ đếm ngược thời gian thực, bảng xếp hạng và nhận định chuyên sâu.
           </p>
 

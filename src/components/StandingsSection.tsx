@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { fetchLeagueStandings } from '../services/footballApi';
 import { TeamStanding, LeagueId } from '../types/football';
-import { Trophy, RefreshCw, AlertCircle } from 'lucide-react';
+import { Trophy, RefreshCw, AlertCircle, Trash2 } from 'lucide-react';
+import { useAdmin } from '../context/AdminContext';
 
 interface StandingsSectionProps {
   onSelectTeam?: (teamName: string) => void;
 }
 
 export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam }) => {
+  const { leagues, isAdmin, deleteLeague } = useAdmin();
   const [selectedLeague, setSelectedLeague] = useState<LeagueId>('epl');
+  const [deletingLeagueId, setDeletingLeagueId] = useState<string | null>(null);
   const [standings, setStandings] = useState<TeamStanding[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,26 +50,76 @@ export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam
 
         {/* League Selector */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          {[
-            { id: 'epl', name: 'Ngoại Hạng Anh' },
-            { id: 'ucl', name: 'Champions League' },
-            { id: 'laliga', name: 'La Liga' },
-            { id: 'bundesliga', name: 'Bundesliga' },
-            { id: 'seriea', name: 'Serie A' },
-            { id: 'ligue1', name: 'Ligue 1' }
-          ].map((lg) => (
-            <button
-              key={lg.id}
-              onClick={() => setSelectedLeague(lg.id as LeagueId)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
-                selectedLeague === lg.id
-                  ? 'bg-emerald-500 text-slate-950 shadow-md shadow-emerald-500/20'
-                  : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
-              }`}
-            >
-              {lg.name}
-            </button>
-          ))}
+          {leagues.map((lg) => {
+            const isSelected = selectedLeague === lg.id;
+            const isConfirmingDelete = deletingLeagueId === lg.id;
+
+            if (isConfirmingDelete) {
+              return (
+                <div
+                  key={lg.id}
+                  className="flex items-center gap-1.5 px-2 py-1 text-xs rounded-lg bg-rose-950 border border-rose-500 shrink-0"
+                >
+                  <span className="text-[10px] text-rose-200">Xóa {lg.shortName}?</span>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await deleteLeague(lg.id);
+                      setDeletingLeagueId(null);
+                      if (selectedLeague === lg.id) {
+                        const remaining = leagues.filter((l) => l.id !== lg.id);
+                        if (remaining.length > 0) setSelectedLeague(remaining[0].id as LeagueId);
+                      }
+                    }}
+                    className="px-1.5 py-0.5 bg-rose-600 hover:bg-rose-500 text-white rounded text-[10px] font-bold cursor-pointer"
+                  >
+                    Xóa
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDeletingLeagueId(null)}
+                    className="px-1 py-0.5 bg-slate-800 text-slate-300 rounded text-[10px] cursor-pointer"
+                  >
+                    Hủy
+                  </button>
+                </div>
+              );
+            }
+
+            return (
+              <div
+                key={lg.id}
+                className={`flex items-center rounded-lg transition-all shrink-0 ${
+                  isSelected
+                    ? 'bg-emerald-500 text-slate-950 font-bold shadow-md shadow-emerald-500/20'
+                    : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => setSelectedLeague(lg.id as LeagueId)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-semibold whitespace-nowrap cursor-pointer"
+                >
+                  <span>{lg.flag}</span>
+                  <span>{lg.shortName}</span>
+                </button>
+
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeletingLeagueId(lg.id);
+                    }}
+                    title={`Admin: Xóa giải ${lg.shortName}`}
+                    className="pr-2 pl-0.5 py-1 text-slate-400 hover:text-rose-400 cursor-pointer"
+                  >
+                    <Trash2 className="w-3 h-3 hover:scale-110 text-rose-400/80 hover:text-rose-300" />
+                  </button>
+                )}
+              </div>
+            );
+          })}
 
           <button
             onClick={() => loadStandings(selectedLeague)}
@@ -219,7 +272,7 @@ export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam
               <>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500/40 border border-emerald-400" />
-                  <span>Top 1-8: Vào thẳng Vòng 1/8 Champions League</span>
+                  <span>Top 1-8: Vào thẳng Vòng 1/8 Champion leauge</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-sm bg-cyan-500/40 border border-cyan-400" />
@@ -230,7 +283,7 @@ export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam
               <>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500/40 border border-emerald-400" />
-                  <span>Suất dự Cúp Châu Âu (UCL)</span>
+                  <span>Suất dự Cúp Châu Âu (Champion leauge)</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-sm bg-rose-500/40 border border-rose-400" />

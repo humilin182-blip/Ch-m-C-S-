@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { LEAGUES_DATA } from '../data/mockFootballData';
 import { LeagueId } from '../types/football';
 import { X, Bell, BellRing, Volume2, ShieldCheck, Check } from 'lucide-react';
 import { playNotificationSound } from '../services/soundEffects';
+import { useAdmin } from '../context/AdminContext';
 
 interface NotificationSettingsModalProps {
   onClose: () => void;
@@ -15,6 +15,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
   enabledLeagues,
   onToggleLeague
 }) => {
+  const { leagues } = useAdmin();
   const [goalAlertSound, setGoalAlertSound] = useState(true);
   const [varAlerts, setVarAlerts] = useState(true);
   const [matchStartAlerts, setMatchStartAlerts] = useState(true);
@@ -136,7 +137,7 @@ export const NotificationSettingsModal: React.FC<NotificationSettingsModalProps>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {LEAGUES_DATA.map((league) => {
+              {leagues.map((league) => {
                 const isSubscribed = enabledLeagues.includes(league.id);
                 return (
                   <button
