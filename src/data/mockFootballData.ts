@@ -81,16 +81,6 @@ export const LEAGUES_DATA: League[] = [
     flag: '🇫🇷',
     color: '#091c3e',
     season: '2026/2027'
-  },
-  {
-    id: 'vleague',
-    name: 'V.League 1',
-    shortName: 'V-League',
-    country: 'Việt Nam',
-    logo: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?auto=format&fit=crop&w=80&q=80',
-    flag: '🇻🇳',
-    color: '#c8102e',
-    season: '2026/2027'
   }
 ];
 

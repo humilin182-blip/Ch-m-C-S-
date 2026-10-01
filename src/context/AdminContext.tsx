@@ -18,6 +18,7 @@ interface AdminContextType {
   isAdmin: boolean;
   adminEmail: string;
   loginWithEmail: (email: string, name?: string, password?: string) => { success: boolean; error?: string };
+  loginWithGoogle: (email: string, name?: string, avatar?: string) => { success: boolean; error?: string };
   logout: () => void;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
@@ -94,12 +95,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch (e) {
       console.warn('Cannot load user profile:', e);
     }
-    return {
-      email: ADMIN_EMAIL,
-      name: 'Huy Admin (humilin182)',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80',
-      isAdmin: true
-    };
+    // For new visitors, guest machines, or logged out users: default to null (Guest)
+    return null;
   });
 
   useEffect(() => {
@@ -249,8 +246,8 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const isUserAdmin = cleanEmail === ADMIN_EMAIL.toLowerCase();
 
     if (isUserAdmin) {
-      // Verify admin password
-      if (password && password !== DEFAULT_ADMIN_PASSWORD) {
+      // Require and verify admin password for humilin182@gmail.com
+      if (!password || password !== DEFAULT_ADMIN_PASSWORD) {
         return { success: false, error: 'Mật khẩu quản trị viên không chính xác!' };
       }
     }
@@ -261,6 +258,23 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       avatar: isUserAdmin
         ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'
         : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80',
+      isAdmin: isUserAdmin
+    };
+
+    setCurrentUser(profile);
+    return { success: true };
+  };
+
+  const loginWithGoogle = (email: string, name?: string, avatar?: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    const isUserAdmin = cleanEmail === ADMIN_EMAIL.toLowerCase();
+
+    const profile: UserProfile = {
+      email: cleanEmail,
+      name: name?.trim() || (isUserAdmin ? 'Huy Admin (humilin182)' : cleanEmail.split('@')[0]),
+      avatar: avatar || (isUserAdmin
+        ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'
+        : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80'),
       isAdmin: isUserAdmin
     };
 
@@ -420,6 +434,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         isAdmin,
         adminEmail: ADMIN_EMAIL,
         loginWithEmail,
+        loginWithGoogle,
         logout,
         isAuthModalOpen,
         setIsAuthModalOpen,
