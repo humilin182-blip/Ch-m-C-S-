@@ -149,20 +149,20 @@ export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-800 bg-[#09111e] shadow-xl">
+        <div className="overflow-x-auto rounded-xl border border-slate-800 bg-[#09111e] shadow-xl touch-pan-x">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="border-b border-slate-800 bg-slate-900/80 text-slate-400 font-bold uppercase tracking-wider">
-                <th className="py-3 px-3 w-12 text-center">#</th>
-                <th className="py-3 px-4">Đội bóng</th>
-                <th className="py-3 px-2 text-center w-12">Trận</th>
-                <th className="py-3 px-2 text-center w-12">Thắng</th>
-                <th className="py-3 px-2 text-center w-12">Hòa</th>
-                <th className="py-3 px-2 text-center w-12">Thua</th>
-                <th className="py-3 px-2 text-center w-16 hidden sm:table-cell">BT-BB</th>
-                <th className="py-3 px-2 text-center w-12">HS</th>
-                <th className="py-3 px-3 text-center w-14 font-extrabold text-white">Điểm</th>
-                <th className="py-3 px-3 text-center w-28 hidden md:table-cell">5 trận gần nhất</th>
+              <tr className="border-b border-slate-800 bg-slate-900/90 text-slate-400 font-bold uppercase tracking-wider">
+                <th className="py-3 px-2 sm:px-3 w-10 sm:w-12 text-center sticky left-0 bg-[#09111e] z-20">#</th>
+                <th className="py-3 px-3 sm:px-4 sticky left-10 sm:left-12 bg-[#09111e] z-20 shadow-[2px_0_6px_rgba(0,0,0,0.5)] min-w-[120px] sm:min-w-[180px]">Đội bóng</th>
+                <th className="py-3 px-2 text-center w-12 whitespace-nowrap">Trận</th>
+                <th className="py-3 px-2 text-center w-12 whitespace-nowrap hidden xs:table-cell">Thắng</th>
+                <th className="py-3 px-2 text-center w-12 whitespace-nowrap hidden xs:table-cell">Hòa</th>
+                <th className="py-3 px-2 text-center w-12 whitespace-nowrap hidden xs:table-cell">Thua</th>
+                <th className="py-3 px-2 text-center w-16 hidden sm:table-cell whitespace-nowrap">BT-BB</th>
+                <th className="py-3 px-2 text-center w-12 whitespace-nowrap">HS</th>
+                <th className="py-3 px-3 text-center w-14 font-extrabold text-white whitespace-nowrap bg-emerald-500/10">Điểm</th>
+                <th className="py-3 px-3 text-center w-28 hidden md:table-cell whitespace-nowrap">5 trận gần nhất</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
@@ -178,8 +178,8 @@ export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam
                     onClick={() => setSelectedTeamDetail(team)}
                     className="hover:bg-slate-800/40 transition-colors cursor-pointer group"
                   >
-                    {/* Position number */}
-                    <td className="py-3 px-3 text-center font-mono font-bold tabular-nums">
+                    {/* Position number - Sticky on Mobile */}
+                    <td className="py-3 px-2 sm:px-3 text-center font-mono font-bold tabular-nums sticky left-0 bg-[#09111e] group-hover:bg-[#121c2e] transition-colors z-10">
                       <span
                         className={`inline-block w-6 h-6 leading-6 rounded-md text-xs ${
                           isTop8UCL || isTop4League
@@ -193,56 +193,56 @@ export const StandingsSection: React.FC<StandingsSectionProps> = ({ onSelectTeam
                       </span>
                     </td>
 
-                    {/* Team Name & Logo */}
-                    <td className="py-3 px-4">
-                      <div className="flex items-center gap-2.5">
+                    {/* Team Name & Logo - Sticky on Mobile */}
+                    <td className="py-3 px-3 sm:px-4 sticky left-10 sm:left-12 bg-[#09111e] group-hover:bg-[#121c2e] transition-colors z-10 shadow-[2px_0_6px_rgba(0,0,0,0.5)]">
+                      <div className="flex items-center gap-2 sm:gap-2.5">
                         {team.teamLogo.startsWith('http') ? (
                           <img
                             src={team.teamLogo}
                             alt={team.teamName}
                             referrerPolicy="no-referrer"
-                            className="w-5 h-5 object-contain"
+                            className="w-5 h-5 object-contain shrink-0"
                           />
                         ) : (
-                          <span className="text-base">{team.teamLogo}</span>
+                          <span className="text-base shrink-0">{team.teamLogo}</span>
                         )}
-                        <span className="font-bold text-white group-hover:text-emerald-300 transition-colors">
+                        <span className="font-bold text-white group-hover:text-emerald-300 transition-colors truncate max-w-[110px] xs:max-w-[160px] sm:max-w-none">
                           {team.teamName}
                         </span>
                       </div>
                     </td>
 
                     {/* Played, Won, Drawn, Lost */}
-                    <td className="py-3 px-2 text-center font-mono tabular-nums text-slate-300">
+                    <td className="py-3 px-2 text-center font-mono tabular-nums text-slate-300 whitespace-nowrap">
                       {team.played}
                     </td>
-                    <td className="py-3 px-2 text-center font-mono tabular-nums text-emerald-400">
+                    <td className="py-3 px-2 text-center font-mono tabular-nums text-emerald-400 whitespace-nowrap hidden xs:table-cell">
                       {team.won}
                     </td>
-                    <td className="py-3 px-2 text-center font-mono tabular-nums text-slate-400">
+                    <td className="py-3 px-2 text-center font-mono tabular-nums text-slate-400 whitespace-nowrap hidden xs:table-cell">
                       {team.drawn}
                     </td>
-                    <td className="py-3 px-2 text-center font-mono tabular-nums text-rose-400">
+                    <td className="py-3 px-2 text-center font-mono tabular-nums text-rose-400 whitespace-nowrap hidden xs:table-cell">
                       {team.lost}
                     </td>
 
                     {/* Goals For / Against */}
-                    <td className="py-3 px-2 text-center font-mono tabular-nums text-slate-400 hidden sm:table-cell">
+                    <td className="py-3 px-2 text-center font-mono tabular-nums text-slate-400 hidden sm:table-cell whitespace-nowrap">
                       {team.goalsFor}-{team.goalsAgainst}
                     </td>
 
                     {/* Goal Difference */}
-                    <td className="py-3 px-2 text-center font-mono font-bold tabular-nums text-slate-200">
+                    <td className="py-3 px-2 text-center font-mono font-bold tabular-nums text-slate-200 whitespace-nowrap">
                       {team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}
                     </td>
 
                     {/* Points */}
-                    <td className="py-3 px-3 text-center font-mono font-black text-sm tabular-nums text-emerald-400 bg-emerald-500/5">
+                    <td className="py-3 px-3 text-center font-mono font-black text-sm tabular-nums text-emerald-400 bg-emerald-500/10 whitespace-nowrap">
                       {team.points}
                     </td>
 
                     {/* Form */}
-                    <td className="py-3 px-3 text-center hidden md:table-cell">
+                    <td className="py-3 px-3 text-center hidden md:table-cell whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1">
                         {team.form.map((res, i) => (
                           <span

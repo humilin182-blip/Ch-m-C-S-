@@ -9,8 +9,8 @@ interface LiveScoreTickerProps {
   matches: Match[];
   selectedLeague: LeagueId | 'all';
   setSelectedLeague: (id: LeagueId | 'all') => void;
-  statusFilter: 'ALL' | 'LIVE' | 'SCHEDULED' | 'FINISHED';
-  setStatusFilter: (status: 'ALL' | 'LIVE' | 'SCHEDULED' | 'FINISHED') => void;
+  statusFilter: 'ALL' | 'SCHEDULED' | 'FINISHED';
+  setStatusFilter: (status: 'ALL' | 'SCHEDULED' | 'FINISHED') => void;
   favorites: string[];
   toggleFavorite: (matchId: string) => void;
   onSelectMatch: (match: Match) => void;
@@ -50,19 +50,6 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
     }, 1000);
     return () => clearInterval(timer);
   }, []);
-
-  // Safely trigger live transition when timer expires inside useEffect (never during render)
-  useEffect(() => {
-    if (!onMatchBecomesLive) return;
-    matches.forEach((m) => {
-      if (m.status === 'SCHEDULED') {
-        const countdown = calculateMatchCountdown(m.startTime);
-        if (countdown.isLive) {
-          onMatchBecomesLive(m.id);
-        }
-      }
-    });
-  }, [matches, tick, onMatchBecomesLive]);
 
   // Filter matches
   const filteredMatches = matches.filter((m) => {
@@ -213,58 +200,54 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
       </div>
 
       {/* Status Segmented Filter */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-800/80">
-        <div className="flex items-center gap-1.5 p-1 bg-slate-900/90 rounded-lg border border-slate-800">
-          {(['ALL', 'LIVE', 'SCHEDULED', 'FINISHED'] as const).map((status) => {
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-1 border-t border-slate-800/80">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-900/90 rounded-lg border border-slate-800 overflow-x-auto scrollbar-none touch-pan-x">
+          {(['ALL', 'SCHEDULED', 'FINISHED'] as const).map((status) => {
             const labels = {
-              ALL: 'Tất cả',
-              LIVE: 'Đang diễn ra (Live)',
-              SCHEDULED: 'Sắp thi đấu',
-              FINISHED: 'Đã kết thúc'
+              ALL: 'Tất cả trận đấu',
+              SCHEDULED: '⏳ Chưa diễn ra (Đếm ngược)',
+              FINISHED: '🏁 Đã kết thúc & Tỉ số FT'
             };
             const isActive = statusFilter === status;
             return (
               <button
                 key={status}
                 onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all whitespace-nowrap min-h-[36px] flex items-center justify-center ${
                   isActive
                     ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                {status === 'LIVE' && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block mr-1.5 animate-pulse" />
-                )}
                 {labels[status]}
               </button>
             );
           })}
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="text-xs text-slate-400 flex items-center gap-1.5">
-            <Clock className="w-3.5 h-3.5 text-emerald-400" />
-            <span>
-              Múi giờ chuẩn: <strong className="text-emerald-300">Asia/Saigon (GMT+7)</strong>
+        <div className="flex flex-wrap items-center justify-between sm:justify-end gap-2 text-xs">
+          <div className="text-slate-400 flex items-center gap-1.5">
+            <Clock className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span className="text-[11px] sm:text-xs">
+              Múi giờ: <strong className="text-emerald-300">Asia/Saigon (GMT+7)</strong>
             </span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[11px] text-cyan-300 bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded font-mono tabular-nums flex items-center gap-1.5">
+            <span className="text-[10px] sm:text-[11px] text-cyan-300 bg-cyan-950/40 border border-cyan-500/30 px-2 py-0.5 rounded font-mono tabular-nums flex items-center gap-1.5">
               <span
                 className={`w-1.5 h-1.5 rounded-full ${
                   isSyncing ? 'bg-amber-400 animate-spin' : 'bg-emerald-400 animate-pulse'
                 }`}
               />
-              {isSyncing ? 'Đang cập nhật...' : `Cập nhật sau ${refreshCountdown}s`}
+              {isSyncing ? 'Đang cập nhật...' : `${refreshCountdown}s`}
             </span>
 
             {onManualRefresh && (
               <button
                 onClick={onManualRefresh}
                 title="Làm mới tỉ số trực tiếp ngay"
-                className="px-2 py-0.5 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 transition-colors"
+                className="px-2 py-0.5 text-xs text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 rounded border border-slate-700 transition-colors cursor-pointer"
               >
                 Làm mới
               </button>
@@ -309,11 +292,7 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
             return (
               <div
                 key={match.id}
-                className={`group relative rounded-xl border transition-all duration-200 bg-[#0b1322] hover:bg-[#0e1728] ${
-                  isLive
-                    ? 'border-emerald-500/40 shadow-[0_0_20px_rgba(16,185,129,0.08)]'
-                    : 'border-slate-800 hover:border-slate-700'
-                }`}
+                className="group relative rounded-xl border transition-all duration-200 bg-[#0b1322] hover:bg-[#0e1728] border-slate-800 hover:border-slate-700"
               >
                 {/* Header row: League & status/time/countdown */}
                 <div className="p-3.5 pb-2 flex items-center justify-between border-b border-slate-800/60">
@@ -327,12 +306,7 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {isLive ? (
-                      <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-bold tabular-nums">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                        <span>{match.minute || 1}' LIVE</span>
-                      </div>
-                    ) : match.status === 'SCHEDULED' ? (
+                    {match.status === 'SCHEDULED' ? (
                       <div className="flex items-center gap-2">
                         {/* Countdown Badge: Còn X ngày, HH:MM:SS hoặc Còn HH:MM:SS */}
                         <div
@@ -340,15 +314,15 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                           title={`Bắt đầu lúc ${formatLocalTime(match.startTime)} (${formatLocalDate(match.startTime)})`}
                         >
                           <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-                          <span>⏳ Chưa đá · {countdown.displayText}</span>
+                          <span>⏳ Chưa diễn ra · {countdown.displayText}</span>
                         </div>
                         <span className="text-[11px] font-medium text-slate-300 hidden sm:inline tabular-nums">
                           {formatLocalTime(match.startTime)} · {formatLocalDate(match.startTime)}
                         </span>
                       </div>
                     ) : (
-                      <div className="text-xs font-medium text-slate-400 bg-slate-800/60 px-2 py-0.5 rounded">
-                        Đã kết thúc
+                      <div className="text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded">
+                        ✓ Đã kết thúc (FT)
                       </div>
                     )}
 
@@ -400,62 +374,86 @@ export const LiveScoreTicker: React.FC<LiveScoreTickerProps> = ({
                 >
                   {/* Home Team */}
                   <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 mr-2">
                       {match.homeTeam.logo.startsWith('http') ? (
                         <img
                           src={match.homeTeam.logo}
                           alt={match.homeTeam.shortName}
                           referrerPolicy="no-referrer"
-                          className="w-7 h-7 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60"
+                          className="w-6 h-6 sm:w-7 sm:h-7 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60 shrink-0"
                         />
                       ) : (
-                        <div className="w-7 h-7 rounded-md bg-slate-800 flex items-center justify-center font-bold text-xs text-white border border-slate-700">
+                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-slate-800 flex items-center justify-center font-bold text-[10px] sm:text-xs text-white border border-slate-700 shrink-0">
                           {match.homeTeam.shortName.substring(0, 2)}
                         </div>
                       )}
-                      <span className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
+                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
                         {match.homeTeam.name}
                       </span>
                     </div>
-                    <div className="text-sm font-mono font-bold text-slate-400 tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+                    <div className="text-xs sm:text-sm font-mono font-bold text-slate-400 tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800 shrink-0">
                       {match.status === 'SCHEDULED' ? 'Chưa đá' : match.homeTeam.score}
                     </div>
                   </div>
 
                   {/* Away Team */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
+                    <div className="flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 mr-2">
                       {match.awayTeam.logo.startsWith('http') ? (
                         <img
                           src={match.awayTeam.logo}
                           alt={match.awayTeam.shortName}
                           referrerPolicy="no-referrer"
-                          className="w-7 h-7 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60"
+                          className="w-6 h-6 sm:w-7 sm:h-7 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60 shrink-0"
                         />
                       ) : (
-                        <div className="w-7 h-7 rounded-md bg-slate-800 flex items-center justify-center font-bold text-xs text-white border border-slate-700">
+                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-md bg-slate-800 flex items-center justify-center font-bold text-[10px] sm:text-xs text-white border border-slate-700 shrink-0">
                           {match.awayTeam.shortName.substring(0, 2)}
                         </div>
                       )}
-                      <span className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
+                      <span className="text-xs sm:text-sm font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
                         {match.awayTeam.name}
                       </span>
                     </div>
-                    <div className="text-sm font-mono font-bold text-slate-400 tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800">
+                    <div className="text-xs sm:text-sm font-mono font-bold text-slate-400 tabular-nums px-2 py-0.5 rounded bg-slate-900 border border-slate-800 shrink-0">
                       {match.status === 'SCHEDULED' ? 'Chưa đá' : match.awayTeam.score}
                     </div>
                   </div>
 
-                  {/* For SCHEDULED matches: Countdown clock banner */}
+                  {/* For SCHEDULED matches: Prominent Digital Countdown Clock */}
                   {match.status === 'SCHEDULED' && (
-                    <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
-                      <span className="text-cyan-300 flex items-center gap-1.5 font-medium">
-                        <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-                        <span>Chưa đá · Đếm ngược đến giờ đấu:</span>
-                      </span>
-                      <span className="font-mono font-bold text-cyan-300 bg-cyan-950/70 border border-cyan-500/40 px-2 py-0.5 rounded tabular-nums shadow-sm">
-                        {countdown.displayText}
-                      </span>
+                    <div className="mt-2.5 pt-2.5 pb-2 px-3 rounded-xl bg-gradient-to-r from-cyan-950/40 via-slate-900 to-emerald-950/30 border border-cyan-500/30 text-xs">
+                      <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2">
+                        <span className="text-cyan-300 flex items-center gap-1.5 font-semibold text-[11px] sm:text-xs">
+                          <Clock className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+                          <span>Chưa diễn ra · Đếm ngược giờ đấu:</span>
+                        </span>
+                        <div className="flex items-center gap-1 font-mono text-[11px] sm:text-xs">
+                          {countdown.days > 0 && (
+                            <>
+                              <span className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 border border-cyan-500/40 font-bold">
+                                <strong className="text-white">{countdown.days}</strong> ngày
+                              </span>
+                              <span className="text-cyan-400 font-bold">:</span>
+                            </>
+                          )}
+                          <span className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 border border-cyan-500/40 font-bold">
+                            <strong className="text-white">{String(countdown.hours).padStart(2, '0')}</strong>h
+                          </span>
+                          <span className="text-cyan-400 font-bold">:</span>
+                          <span className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 border border-cyan-500/40 font-bold">
+                            <strong className="text-white">{String(countdown.minutes).padStart(2, '0')}</strong>p
+                          </span>
+                          <span className="text-cyan-400 font-bold">:</span>
+                          <span className="px-1.5 py-0.5 rounded bg-black/80 text-emerald-400 border border-emerald-500/40 font-bold animate-pulse">
+                            <strong className="text-emerald-300">{String(countdown.seconds).padStart(2, '0')}</strong>s
+                          </span>
+                        </div>
+                      </div>
+                      <div className="mt-1.5 pt-1.5 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400">
+                        <span>Khởi tranh lúc: <strong className="text-slate-200">{formatLocalTime(match.startTime)} · {formatLocalDate(match.startTime)}</strong></span>
+                        <span className="text-cyan-400 font-mono font-medium">Asia/Saigon (GMT+7)</span>
+                      </div>
                     </div>
                   )}
 

@@ -24,6 +24,7 @@ import { useAdmin } from './context/AdminContext';
 import { AdminCenterModal } from './components/AdminCenterModal';
 import { EditMatchModal } from './components/EditMatchModal';
 import { AuthModal } from './components/AuthModal';
+import { BottomMobileNav } from './components/BottomMobileNav';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>('scores');
@@ -34,7 +35,7 @@ export default function App() {
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [refreshCountdown, setRefreshCountdown] = useState<number>(30);
   const [selectedLeague, setSelectedLeague] = useState<LeagueId | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'LIVE' | 'SCHEDULED' | 'FINISHED'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'SCHEDULED' | 'FINISHED'>('ALL');
   const [favorites, setFavorites] = useState<string[]>([]);
 
   // Modals state
@@ -175,21 +176,6 @@ export default function App() {
     return () => clearInterval(countdownTimer);
   }, []);
 
-  // Handle countdown expiry: transition scheduled match to live
-  const handleMatchBecomesLive = (matchId: string) => {
-    setMatches((prev) =>
-      prev.map((m) =>
-        m.id === matchId
-          ? {
-              ...m,
-              status: 'LIVE',
-              minute: 1
-            }
-          : m
-      )
-    );
-  };
-
   // Toggle favorite match
   const handleToggleFavorite = (matchId: string) => {
     setFavorites((prev) =>
@@ -202,53 +188,6 @@ export default function App() {
     setSubscribedLeagues((prev) =>
       prev.includes(leagueId) ? prev.filter((id) => id !== leagueId) : [...prev, leagueId]
     );
-  };
-
-  // Trigger test live goal alert
-  const handleTriggerTestGoal = () => {
-    const liveMatch = matches.find((m) => m.status === 'LIVE') || matches[0];
-    if (!liveMatch) return;
-
-    const newHomeScore = liveMatch.homeTeam.score + 1;
-
-    setMatches((prev) =>
-      prev.map((m) => {
-        if (m.id === liveMatch.id) {
-          const updatedMin = (m.minute || 75) + 1;
-          return {
-            ...m,
-            minute: updatedMin,
-            homeTeam: {
-              ...m.homeTeam,
-              score: newHomeScore
-            },
-            events: [
-              ...m.events,
-              {
-                id: `e-goal-${Date.now()}`,
-                minute: updatedMin,
-                type: 'GOAL',
-                team: 'home',
-                player: liveMatch.homeTeam.name + ' Tiền đạo',
-                detail: 'Dứt điểm hiểm hóc cận thành tung lưới'
-              }
-            ]
-          };
-        }
-        return m;
-      })
-    );
-
-    setCurrentGoalAlert({
-      id: `alert-${Date.now()}`,
-      matchTitle: `${liveMatch.homeTeam.shortName} vs ${liveMatch.awayTeam.shortName}`,
-      leagueName: 'Trận đấu trực tiếp',
-      teamName: liveMatch.homeTeam.name,
-      playerName: liveMatch.homeTeam.shortName + ' Tiền đạo',
-      minute: (liveMatch.minute || 75) + 1,
-      newScore: `${newHomeScore} - ${liveMatch.awayTeam.score}`,
-      onViewDetails: () => setActiveMatchDetail(liveMatch)
-    });
   };
 
   // Handle new community message
@@ -295,9 +234,8 @@ export default function App() {
     }
   }, [currentUser, setIsAuthModalOpen]);
 
-  const displayMatches = processMatchesWithAdmin(matches);
-  const liveMatches = displayMatches.filter((m) => m.status === 'LIVE');
-  const featuredLiveMatch = liveMatches[0] || displayMatches[0];
+  const displayMatches = processMatchesWithAdmin(matches).filter((m) => m.status !== 'LIVE');
+  const featuredMatch = displayMatches.find((m) => m.status === 'SCHEDULED') || displayMatches[0];
 
   return (
     <div
@@ -326,11 +264,10 @@ export default function App() {
         setIsDarkMode={setIsDarkMode}
         onOpenNotifications={() => setIsNotificationsOpen(true)}
         onOpenPredictions={() => setIsPredictionsOpen(true)}
-        onTriggerTestGoal={handleTriggerTestGoal}
         onOpenCustomizer={() => setIsCustomizerOpen(true)}
         onOpenAdmin={() => setIsAdminCenterOpen(true)}
         onOpenAuth={() => setIsAuthModalOpen(true)}
-        liveMatchCount={liveMatches.length}
+        liveMatchCount={0}
       />
 
       {/* Floating Goal Alert Banner with procedural audio */}
@@ -340,7 +277,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6 sm:space-y-8 pb-28 lg:pb-12">
         {/* Welcome & Login Requirement Banner for Guests */}
         {!currentUser && (
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-amber-950/60 via-slate-900 to-emerald-950/60 border border-amber-500/40 shadow-lg animate-fadeIn">
@@ -382,7 +319,7 @@ export default function App() {
 
         {/* Hero Pitch Visual Banner */}
         <HeroPitchBanner
-          featuredMatch={featuredLiveMatch}
+          featuredMatch={featuredMatch}
           onSelectMatch={(m) => setActiveMatchDetail(m)}
           onOpenHighlights={() => setActiveTab('highlights')}
           onOpenSchedule={() => setActiveTab('schedule')}
@@ -395,19 +332,19 @@ export default function App() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-cyan-950/70 border border-emerald-500/40 shadow-lg">
           <div className="flex items-center gap-3 text-left">
             <span className="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-lg shrink-0">
-              🗓️
+              ⚡
             </span>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-bold text-white">
-                  Lịch Champion leauge, Ngoại Hạng Anh, La Liga, Bundesliga, Serie A & Ligue 1 Đến Hết Năm 2026
+                  Đã cập nhật: Địa chấn Croatia 0 - 7 Anh, TBN 3 - 1 CH Séc, Pháp 1 - 1 Ý & Lịch đấu rạng sáng 05/10!
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
                   Mới Nhất
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                Đầy đủ C1 Matchday 2 - 6, EPL (Vòng 6 - 18), La Liga (Vòng 8 - 17) & Bundesliga (Vòng 5 - 15). Mọi trận chưa đá đều gắn nhãn <strong className="text-cyan-300 font-semibold">⏳ Chưa đá</strong> cùng đồng hồ đếm ngược trực tiếp từng giây (giờ Việt Nam GMT+7).
+                Các trận cầu đỉnh cao Nations League vừa kết thúc và lịch đấu đêm nay/rạng sáng 05/10 lúc 01h45: <strong className="text-amber-300">Bồ Đào Nha vs Na Uy (Ronaldo vs Haaland)</strong>, Hà Lan vs Serbia, Hy Lạp vs Đức, Wales vs Đan Mạch!
               </p>
             </div>
           </div>
@@ -459,7 +396,6 @@ export default function App() {
                 onSelectMatch={(m) => setActiveMatchDetail(m)}
                 onOpenHighlights={() => setActiveTab('highlights')}
                 onOpenAnalysis={() => setActiveTab('analysis')}
-                onMatchBecomesLive={handleMatchBecomesLive}
                 onManualRefresh={() => loadMatches(false)}
                 refreshCountdown={refreshCountdown}
                 isSyncing={isSyncing}
@@ -520,6 +456,14 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Mobile Bottom Dock (Fixed at bottom on mobile screens) */}
+      <BottomMobileNav
+        activeTab={activeTab as any}
+        setActiveTab={setActiveTab as any}
+        liveMatchCount={0}
+        onOpenAuth={() => setIsAuthModalOpen(true)}
+      />
 
       {/* Match Center Modal (Details, Timeline, Stats, Lineups, Community Chat) */}
       {activeMatchDetail && (

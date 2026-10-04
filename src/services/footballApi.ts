@@ -6,6 +6,7 @@ import { BUNDESLIGA_2026_SCHEDULE } from '../data/bundesliga2026Schedule';
 import { UCL_2026_SCHEDULE } from '../data/ucl2026Schedule';
 import { SERIEA_2026_SCHEDULE } from '../data/seriea2026Schedule';
 import { LIGUE1_2026_SCHEDULE } from '../data/ligue12026Schedule';
+import { NATIONS_LEAGUE_2026_MATCHES } from '../data/nationsLeague2026Data';
 
 export const LEAGUE_SLUG_MAP: Record<LeagueId, string> = {
   epl: 'eng.1',
@@ -68,8 +69,8 @@ export function calculateMatchCountdown(startTimeIso: string): {
 
   if (diffMs <= 0) {
     return {
-      isLive: true,
-      displayText: 'Đang diễn ra (LIVE)',
+      isLive: false,
+      displayText: 'Đã đến giờ đấu',
       totalSeconds: 0,
       days: 0,
       hours: 0,
@@ -559,10 +560,9 @@ export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
     return BUNDESLIGA_2026_SCHEDULE;
   }
 
-  // If Nations League requested, return the authentic October 2026 fixtures
+  // If Nations League requested, return the authentic updated Nations League results & fixtures
   if (leagueId === 'unl') {
-    const unlOct = OCTOBER_2026_SCHEDULE.filter((m) => m.leagueId === 'unl');
-    return unlOct.length > 0 ? unlOct : getRealNationsLeagueFixtures();
+    return NATIONS_LEAGUE_2026_MATCHES;
   }
 
   // If Champions League requested, return world-class UCL fixtures with real countdown
@@ -622,21 +622,22 @@ export async function fetchLeagueMatches(leagueId: LeagueId): Promise<Match[]> {
  * Fetch matches across all top leagues in parallel
  */
 export async function fetchAllLeaguesMatches(): Promise<Match[]> {
-  const otherLeagues: LeagueId[] = ['epl', 'laliga', 'bundesliga', 'ucl', 'seriea', 'ligue1'];
+  const otherLeagues: LeagueId[] = ['unl', 'epl', 'laliga', 'bundesliga', 'ucl', 'seriea', 'ligue1'];
 
   const results = await Promise.allSettled(
     otherLeagues.map((lg) => fetchLeagueMatches(lg))
   );
 
-  // Combine Premier League, La Liga, Bundesliga, Serie A, Ligue 1, UEFA Champions League, October 2026 schedule, authentic Nations League matches
+  // Combine UEFA Nations League, Premier League, La Liga, Bundesliga, Serie A, Ligue 1, UEFA Champions League, and non-duplicate October 2026 schedule
   const allMatches: Match[] = [
+    ...NATIONS_LEAGUE_2026_MATCHES,
     ...PREMIER_LEAGUE_2026_SCHEDULE,
     ...LALIGA_2026_SCHEDULE,
     ...BUNDESLIGA_2026_SCHEDULE,
     ...SERIEA_2026_SCHEDULE,
     ...LIGUE1_2026_SCHEDULE,
     ...UCL_2026_SCHEDULE,
-    ...OCTOBER_2026_SCHEDULE
+    ...OCTOBER_2026_SCHEDULE.filter((m) => m.leagueId !== 'unl')
   ];
 
   results.forEach((res) => {
@@ -650,10 +651,13 @@ export async function fetchAllLeaguesMatches(): Promise<Match[]> {
     }
   });
 
-  // Sort: LIVE matches first, then finished with results, then upcoming by start time
-  return allMatches.sort((a, b) => {
-    if (a.status === 'LIVE' && b.status !== 'LIVE') return -1;
-    if (b.status === 'LIVE' && a.status !== 'LIVE') return 1;
+  // Filter out any LIVE (đang đá) matches per user request: only show FINISHED results and upcoming SCHEDULED games
+  const filteredMatches = allMatches.filter((m) => m.status !== 'LIVE');
+
+  // Sort: Finished matches first (recent results), then upcoming matches by start time
+  return filteredMatches.sort((a, b) => {
+    if (a.status === 'FINISHED' && b.status !== 'FINISHED') return -1;
+    if (b.status === 'FINISHED' && a.status !== 'FINISHED') return 1;
     return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
   });
 }

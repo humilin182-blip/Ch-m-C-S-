@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Match, CommunityMessage } from '../types/football';
-import { X, Play, Clock, Shield, Users, MessageSquare, Send, ThumbsUp, Flame, Edit3, Trash2 } from 'lucide-react';
+import { X, Play, Clock, Shield, Users, MessageSquare, Send, ThumbsUp, Flame, Edit3, Trash2, Calendar, MapPin, Award } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
+import { calculateMatchCountdown } from '../services/footballApi';
 
 interface MatchDetailModalProps {
   match: Match | null;
@@ -20,8 +21,44 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
   const [activeTab, setActiveTab] = useState<'timeline' | 'stats' | 'lineups' | 'chat'>('timeline');
   const [chatInput, setChatInput] = useState('');
   const [selectedFanTeam, setSelectedFanTeam] = useState<string>('');
+  const [, setTick] = useState(0);
+
+  // Live countdown ticker every second for scheduled matches
+  useEffect(() => {
+    if (!match || match.status !== 'SCHEDULED') return;
+    const interval = setInterval(() => {
+      setTick((t) => t + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [match?.status]);
 
   if (!match) return null;
+
+  const countdown = calculateMatchCountdown(match.startTime);
+
+  const formatKickoff = (iso: string) => {
+    try {
+      const d = new Date(iso);
+      const timeStr = d.toLocaleTimeString('vi-VN', {
+        timeZone: 'Asia/Saigon',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+      const dateStr = d.toLocaleDateString('vi-VN', {
+        timeZone: 'Asia/Saigon',
+        weekday: 'long',
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      return { timeStr, dateStr };
+    } catch {
+      return { timeStr: '01:45', dateStr: '05/10/2026' };
+    }
+  };
+
+  const { timeStr: kickoffTime, dateStr: kickoffDate } = formatKickoff(match.startTime);
 
   const currentFanTeam = selectedFanTeam || match.homeTeam.shortName;
 
@@ -33,6 +70,7 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
   };
 
   const isLive = match.status === 'LIVE';
+  const isScheduled = match.status === 'SCHEDULED';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
@@ -86,55 +124,89 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
         </div>
 
         {/* Score Header Showcase */}
-        <div className="p-6 bg-gradient-to-b from-slate-900/90 to-[#09111e] border-b border-slate-800">
-          <div className="grid grid-cols-3 items-center text-center">
+        <div className="p-4 sm:p-6 bg-gradient-to-b from-slate-900/90 to-[#09111e] border-b border-slate-800">
+          <div className="grid grid-cols-3 items-center text-center gap-1 sm:gap-2">
             {/* Home Team */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg text-white shadow-lg">
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2 min-w-0">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sm sm:text-lg text-white shadow-lg shrink-0">
                 {match.homeTeam.shortName.substring(0, 3)}
               </div>
-              <h3 className="font-bold text-base text-white">{match.homeTeam.name}</h3>
+              <h3 className="font-bold text-xs sm:text-base text-white truncate max-w-full">{match.homeTeam.name}</h3>
             </div>
 
             {/* Score & Time */}
-            <div className="flex flex-col items-center">
-              {isLive ? (
-                <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-xs font-bold mb-2 animate-pulse tabular-nums">
-                  <span className="w-2 h-2 rounded-full bg-rose-500" />
-                  {match.minute}' ĐANG DIỄN RA
+            <div className="flex flex-col items-center px-1">
+              {isScheduled ? (
+                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/50 text-cyan-300 text-[10px] sm:text-xs font-mono font-bold mb-1 sm:mb-2 shadow-sm">
+                  <Clock className="w-3.5 h-3.5 text-cyan-400 animate-spin" style={{ animationDuration: '6s' }} />
+                  <span>Chưa diễn ra · Đếm ngược</span>
+                </div>
+              ) : isLive ? (
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-400 text-[10px] sm:text-xs font-bold mb-1 sm:mb-2 animate-pulse tabular-nums">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                  {match.minute}' LIVE
                 </div>
               ) : (
-                <div className="text-xs text-slate-400 mb-2">
-                  {match.status === 'SCHEDULED' ? 'Chưa bắt đầu' : 'Trận đấu kết thúc'}
+                <div className="text-[10px] sm:text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 rounded-full mb-1 sm:mb-2">
+                  ✓ Kết thúc (FT)
                 </div>
               )}
 
-              <div className="text-4xl sm:text-5xl font-extrabold font-mono text-white tracking-widest tabular-nums">
-                {match.status === 'SCHEDULED' ? 'VS' : `${match.homeTeam.score} - ${match.awayTeam.score}`}
+              <div className="text-2xl sm:text-5xl font-extrabold font-mono text-white tracking-widest tabular-nums">
+                {isScheduled ? 'VS' : `${match.homeTeam.score} - ${match.awayTeam.score}`}
               </div>
 
-              <div className="text-xs text-slate-400 mt-2 flex items-center gap-1.5">
-                <span>📍 {match.stadium}</span>
-                <span>·</span>
-                <span>👨‍⚖️ {match.referee}</span>
+              {/* Real-time Digital Countdown Clock for Scheduled Games */}
+              {isScheduled && (
+                <div className="mt-2 flex items-center gap-1 font-mono text-xs tabular-nums">
+                  {countdown.days > 0 && (
+                    <>
+                      <span className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 border border-cyan-500/40 font-bold text-[11px] sm:text-xs">
+                        <strong className="text-white">{countdown.days}</strong>d
+                      </span>
+                      <span className="text-cyan-400 font-bold">:</span>
+                    </>
+                  )}
+                  <span className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 border border-cyan-500/40 font-bold text-[11px] sm:text-xs">
+                    <strong className="text-white">{String(countdown.hours).padStart(2, '0')}</strong>h
+                  </span>
+                  <span className="text-cyan-400 font-bold">:</span>
+                  <span className="px-1.5 py-0.5 rounded bg-black/80 text-cyan-300 border border-cyan-500/40 font-bold text-[11px] sm:text-xs">
+                    <strong className="text-white">{String(countdown.minutes).padStart(2, '0')}</strong>m
+                  </span>
+                  <span className="text-cyan-400 font-bold">:</span>
+                  <span className="px-1.5 py-0.5 rounded bg-black/80 text-emerald-400 border border-emerald-500/40 font-bold text-[11px] sm:text-xs animate-pulse">
+                    <strong className="text-emerald-300">{String(countdown.seconds).padStart(2, '0')}</strong>s
+                  </span>
+                </div>
+              )}
+
+              <div className="text-[10px] sm:text-xs text-slate-400 mt-1 sm:mt-2 flex flex-wrap items-center justify-center gap-1 sm:gap-1.5">
+                <span className="truncate max-w-[120px] sm:max-w-none">📍 {match.stadium}</span>
+                {match.referee && (
+                  <>
+                    <span className="hidden xs:inline">·</span>
+                    <span className="hidden xs:inline truncate max-w-[110px] sm:max-w-none">👨‍⚖️ {match.referee}</span>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Away Team */}
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-lg text-white shadow-lg">
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2 min-w-0">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-bold text-sm sm:text-lg text-white shadow-lg shrink-0">
                 {match.awayTeam.shortName.substring(0, 3)}
               </div>
-              <h3 className="font-bold text-base text-white">{match.awayTeam.name}</h3>
+              <h3 className="font-bold text-xs sm:text-base text-white truncate max-w-full">{match.awayTeam.name}</h3>
             </div>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex border-b border-slate-800 bg-slate-900/40 px-4">
+        {/* Navigation Tabs - Horizontal Touch Scrollable on Mobile */}
+        <div className="flex border-b border-slate-800 bg-slate-900/40 px-2 sm:px-4 overflow-x-auto scrollbar-none whitespace-nowrap touch-pan-x">
           <button
             onClick={() => setActiveTab('timeline')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors shrink-0 ${
               activeTab === 'timeline'
                 ? 'border-emerald-400 text-emerald-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -145,7 +217,7 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('stats')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors shrink-0 ${
               activeTab === 'stats'
                 ? 'border-emerald-400 text-emerald-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -156,7 +228,7 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('lineups')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors shrink-0 ${
               activeTab === 'lineups'
                 ? 'border-emerald-400 text-emerald-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
@@ -167,14 +239,14 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('chat')}
-            className={`flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors shrink-0 ${
               activeTab === 'chat'
                 ? 'border-emerald-400 text-emerald-400'
                 : 'border-transparent text-slate-400 hover:text-slate-200'
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5" />
-            Phòng Chat Cộng Đồng ({communityMessages.length})
+            Chat Cộng Đồng ({communityMessages.length})
           </button>
         </div>
 
@@ -183,7 +255,65 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           {/* TAB 1: TIMELINE */}
           {activeTab === 'timeline' && (
             <div className="space-y-4">
-              {match.events.length === 0 ? (
+              {isScheduled ? (
+                <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-cyan-950/40 via-slate-900 to-emerald-950/20 border border-cyan-500/30 text-center space-y-4">
+                  <div className="inline-flex p-3 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                    <Clock className="w-8 h-8 animate-pulse" />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-400 bg-cyan-950/80 px-2.5 py-1 rounded-full border border-cyan-500/30">
+                      Trận Đấu Chưa Diễn Ra
+                    </span>
+                    <h4 className="text-base sm:text-xl font-bold text-white mt-2">
+                      {match.homeTeam.name} vs {match.awayTeam.name}
+                    </h4>
+                    <p className="text-xs text-slate-300 mt-1">
+                      Giờ bóng lăn chính thức: <strong className="text-emerald-300 font-semibold">{kickoffTime}</strong> ({kickoffDate}) · Giờ Việt Nam (GMT+7)
+                    </p>
+                  </div>
+
+                  {/* Digital Clock Box */}
+                  <div className="inline-flex flex-wrap items-center justify-center gap-2 p-3 sm:p-4 rounded-xl bg-black/70 border border-cyan-500/40 shadow-inner">
+                    <div className="text-center px-2">
+                      <div className="text-xl sm:text-2xl font-black font-mono text-white tabular-nums">{countdown.days}</div>
+                      <div className="text-[9px] uppercase font-bold text-cyan-400">Ngày</div>
+                    </div>
+                    <span className="text-cyan-400 font-bold text-xl">:</span>
+                    <div className="text-center px-2">
+                      <div className="text-xl sm:text-2xl font-black font-mono text-white tabular-nums">{String(countdown.hours).padStart(2, '0')}</div>
+                      <div className="text-[9px] uppercase font-bold text-cyan-400">Giờ</div>
+                    </div>
+                    <span className="text-cyan-400 font-bold text-xl">:</span>
+                    <div className="text-center px-2">
+                      <div className="text-xl sm:text-2xl font-black font-mono text-white tabular-nums">{String(countdown.minutes).padStart(2, '0')}</div>
+                      <div className="text-[9px] uppercase font-bold text-cyan-400">Phút</div>
+                    </div>
+                    <span className="text-cyan-400 font-bold text-xl">:</span>
+                    <div className="text-center px-2">
+                      <div className="text-xl sm:text-2xl font-black font-mono text-emerald-400 tabular-nums animate-pulse">{String(countdown.seconds).padStart(2, '0')}</div>
+                      <div className="text-[9px] uppercase font-bold text-emerald-400">Giây</div>
+                    </div>
+                  </div>
+
+                  {/* Stadium & Referee Info */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-left text-xs pt-3 border-t border-slate-800">
+                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2.5">
+                      <MapPin className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-medium">Sân vận động</span>
+                        <strong className="text-white text-xs">{match.stadium}</strong>
+                      </div>
+                    </div>
+                    <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center gap-2.5">
+                      <Award className="w-4 h-4 text-cyan-400 shrink-0" />
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-medium">Trọng tài điều khiển</span>
+                        <strong className="text-white text-xs">{match.referee || 'Trọng tài quốc tế'}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : match.events.length === 0 ? (
                 <div className="text-center py-10 text-slate-400 text-sm">
                   Trận đấu chưa có sự kiện nào hoặc chưa bắt đầu.
                 </div>
@@ -254,6 +384,14 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
           {/* TAB 2: DETAILED STATS */}
           {activeTab === 'stats' && (
             <div className="space-y-4">
+              {isScheduled && (
+                <div className="p-3.5 rounded-xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 text-xs flex items-center gap-2.5 mb-2">
+                  <Clock className="w-4 h-4 text-cyan-400 shrink-0 animate-pulse" />
+                  <span>
+                    Trận đấu chưa bắt đầu. Chỉ số chuyên sâu (kiểm soát bóng, xG, số cú sút, phạt góc) sẽ được cập nhật trực tiếp theo thời gian thực khi bóng lăn lúc <strong className="text-white font-bold">{kickoffTime}</strong> ({kickoffDate}).
+                  </span>
+                </div>
+              )}
               {[
                 { label: 'Kiểm soát bóng', home: `${match.stats.possession[0]}%`, away: `${match.stats.possession[1]}%`, hVal: match.stats.possession[0], aVal: match.stats.possession[1] },
                 { label: 'Tổng số cú sút', home: match.stats.shots[0], away: match.stats.shots[1], hVal: match.stats.shots[0], aVal: match.stats.shots[1] },

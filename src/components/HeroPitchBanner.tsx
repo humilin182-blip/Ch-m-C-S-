@@ -122,20 +122,29 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
       createBurst(e.clientX - rect.left, e.clientY - rect.top, 25);
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      if (!e.touches || e.touches.length === 0) return;
+      const rect = canvas.getBoundingClientRect();
+      const touch = e.touches[0];
+      createBurst(touch.clientX - rect.left, touch.clientY - rect.top, 30);
+    };
+
     window.addEventListener('resize', handleResize);
     canvas.addEventListener('click', handleCanvasClick);
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
 
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
       canvas.removeEventListener('click', handleCanvasClick);
+      canvas.removeEventListener('touchstart', handleTouchStart);
     };
   }, []);
 
   return (
     <div className="relative w-full rounded-2xl overflow-hidden border border-emerald-500/30 bg-[#09111e] shadow-2xl group">
       {/* Background Graphic Asset: Photorealistic cyber soccer cleats or customized user image */}
-      <div className="relative aspect-[21/9] min-h-[320px] sm:min-h-[420px] w-full overflow-hidden">
+      <div className="relative aspect-[21/9] min-h-[350px] xs:min-h-[340px] sm:min-h-[420px] w-full overflow-hidden">
         <img
           src={customBannerImage || cleatsImageSrc}
           alt="Hình nền sân cỏ số hoặc ảnh tùy chỉnh giao diện"
@@ -207,52 +216,52 @@ export const HeroPitchBanner: React.FC<HeroPitchBannerProps> = ({
           </div>
 
           {/* Headline */}
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug mb-3">
+          <h1 className="text-xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug mb-2 sm:mb-3">
             Trải Nghiệm Đỉnh Cao Bóng Đá Số Toàn Cầu
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 line-clamp-2 sm:line-clamp-none mb-5 text-balance">
-            Cập nhật tức thời Champion leauge, Nations League, Premier League, La Liga, V-League...
-            Báo bàn thắng rung chuông tức thì, đồng hồ đếm ngược thời gian thực, bảng xếp hạng và nhận định chuyên sâu.
+          <p className="text-xs sm:text-base text-slate-300 line-clamp-2 sm:line-clamp-none mb-4 sm:mb-5 text-balance">
+            Cập nhật tức thời Champion leauge, Premier League, La Liga, Bundesliga, Serie A, Ligue 1...
+            Báo bàn thắng tức thì, đồng hồ đếm ngược thời gian thực, bảng xếp hạng và nhận định chuyên sâu.
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
             {featuredMatch && (
               <button
                 onClick={() => onSelectMatch(featuredMatch)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02] cursor-pointer"
+                className="flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all hover:scale-[1.02] cursor-pointer"
               >
                 <BarChart2 className="w-4 h-4" />
-                Xem Thống Kê · {featuredMatch.homeTeam.shortName} vs {featuredMatch.awayTeam.shortName}
+                <span>Thống Kê · {featuredMatch.homeTeam.shortName} vs {featuredMatch.awayTeam.shortName}</span>
               </button>
             )}
 
             {onOpenSchedule && (
               <button
                 onClick={onOpenSchedule}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/90 text-cyan-300 border border-cyan-500/50 font-bold text-sm transition-all hover:scale-[1.02] cursor-pointer backdrop-blur-sm shadow-md"
+                className="flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-cyan-950/80 hover:bg-cyan-900/90 text-cyan-300 border border-cyan-500/50 font-bold text-xs sm:text-sm transition-all hover:scale-[1.02] cursor-pointer backdrop-blur-sm shadow-md"
               >
                 <Calendar className="w-4 h-4 text-cyan-400" />
-                Lịch Thi Đấu 10/2026 (54 Trận)
+                <span>Lịch Thi Đấu (54 Trận)</span>
               </button>
             )}
 
             <button
               onClick={onOpenHighlights}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-medium text-sm transition-all hover:text-white cursor-pointer backdrop-blur-sm"
+              className="flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 text-slate-200 border border-slate-700/80 font-medium text-xs sm:text-sm transition-all hover:text-white cursor-pointer backdrop-blur-sm"
             >
               <Flame className="w-4 h-4 text-amber-400" />
-              Xem Highlight Bàn Thắng
+              <span>Highlight Bàn Thắng</span>
             </button>
           </div>
         </div>
 
         {/* Small Pitch Interactive Hint */}
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 pointer-events-auto">
-          <div className="flex items-center gap-2">
-            <Activity className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Mẹo: Nhấp chuột vào mặt sân cỏ số để kích hoạt luồng hạt năng lượng ánh sáng</span>
+        <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 pointer-events-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Activity className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span className="text-[11px] sm:text-xs">Chạm hoặc nhấp vào mặt sân để phóng luồng hạt năng lượng ánh sáng</span>
           </div>
           <div className="hidden sm:flex items-center gap-3">
             <span className="text-emerald-400">● 100% Cập nhật tự động</span>

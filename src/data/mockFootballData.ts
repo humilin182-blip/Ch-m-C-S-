@@ -86,54 +86,122 @@ export const LEAGUES_DATA: League[] = [
 
 export const HIGHLIGHTS_DATA: HighlightItem[] = [
   {
+    id: 'hl-unl-cro-eng',
+    matchId: 'unl-cro-eng-0410',
+    title: 'Highlights: Croatia 0 - 7 Anh | Cơn địa chấn lớn nhất lịch sử Nations League',
+    duration: '12:40',
+    league: 'UEFA Nations League',
+    thumbnail: cyberHighlightImg,
+    views: '4.8M lượt xem',
+    date: 'Vừa xong',
+    events: [
+      { minute: '14\'', title: 'Harry Kane mở màn cơn mưa gôn với cú đệm lòng cận thành', timestampSec: 40 },
+      { minute: '26\'', title: 'Bellingham sút xa cháy lưới Croatia từ ngoài vòng cấm', timestampSec: 120 },
+      { minute: '38\'', title: 'Bukayo Saka solo ma thuật nâng tỉ số lên 3-0', timestampSec: 210 },
+      { minute: '45\'', title: 'Harry Kane hoàn tất cú đúp phạt đền', timestampSec: 310 },
+      { minute: '58\'', title: 'Saka hoàn tất cú đúp với pha đá bồi sấm sét', timestampSec: 430 },
+      { minute: '73\'', title: 'Phil Foden phối hợp đập nhả mẫu mực ghi bàn thứ 6', timestampSec: 540 },
+      { minute: '86\'', title: 'Cole Palmer bấm bóng ngẫu hứng ấn định tỉ số không tưởng 7-0', timestampSec: 670 }
+    ]
+  },
+  {
+    id: 'hl-unl-esp-cze',
+    matchId: 'unl-esp-cze-0410',
+    title: 'Highlights: Tây Ban Nha 3 - 1 CH Séc | Lamine Yamal lập cú đúp siêu hạng',
+    duration: '09:20',
+    league: 'UEFA Nations League',
+    thumbnail: cyberCleatsImg,
+    views: '2.9M lượt xem',
+    date: 'Hôm nay',
+    events: [
+      { minute: '08\'', title: 'Lamine Yamal mở tỉ số sớm bằng pha cứa lòng tuyệt đỉnh', timestampSec: 35 },
+      { minute: '33\'', title: 'Patrik Schick đánh đầu uy lực san hòa cho CH Séc', timestampSec: 170 },
+      { minute: '57\'', title: 'Lamine Yamal hoàn tất cú đúp với cú sút góc gần sấm sét', timestampSec: 310 },
+      { minute: '76\'', title: 'Nico Williams bứt tốc ghi bàn ấn định 3-1 cho La Roja', timestampSec: 490 }
+    ]
+  },
+  {
+    id: 'hl-unl-fra-ita',
+    matchId: 'unl-fra-ita-0310',
+    title: 'Highlights: Pháp 1 - 1 Italia | Hòa nghẹt thở giữa hai ông lớn châu Âu',
+    duration: '10:05',
+    league: 'UEFA Nations League',
+    thumbnail: cyberStadiumImg,
+    views: '3.1M lượt xem',
+    date: 'Hôm qua',
+    events: [
+      { minute: '32\'', title: 'Mbappé tăng tốc đột phá mở tỉ số cho tuyển Pháp', timestampSec: 65 },
+      { minute: '74\'', title: 'Federico Chiesa vô lê bóng sống gỡ hòa 1-1 nghẹt thở cho Italia', timestampSec: 380 }
+    ]
+  },
+  {
     id: 'hl-1',
     matchId: 'match-ucl-1',
     title: 'Highlights: Manchester City 2 - 1 Real Madrid | Siêu phẩm Foden nổ tung cầu trường',
     duration: '09:42',
-    league: 'UEFA Champions League',
+    league: 'Champion leauge',
     thumbnail: cyberHighlightImg,
     views: '2.4M lượt xem',
-    date: 'Hôm nay',
+    date: 'C1 Châu Âu',
     events: [
       { minute: '23\'', title: 'Haaland mở tỉ số bằng pha đánh đầu sấm sét', timestampSec: 45 },
       { minute: '54\'', title: 'Mbappé tăng tốc ghi bàn gỡ hòa đẳng cấp', timestampSec: 180 },
       { minute: '68\'', title: 'Phil Foden lập siêu phẩm nã đại bác góc xa', timestampSec: 320 },
       { minute: '89\'', title: 'Ederson bay người cản phá cú sút phút chót của Vinícius', timestampSec: 510 }
     ]
-  },
-  {
-    id: 'hl-2',
-    matchId: 'match-epl-1',
-    title: 'Highlights: Arsenal 1 - 1 Liverpool | Đại chiến rực lửa tại Emirates',
-    duration: '11:15',
-    league: 'Premier League',
-    thumbnail: cyberCleatsImg,
-    views: '1.8M lượt xem',
-    date: 'Hôm nay',
-    events: [
-      { minute: '14\'', title: 'Saka cứa lòng ngoạn mục mở tỉ số', timestampSec: 60 },
-      { minute: '45\'', title: 'Salah đệm bóng nhạy cảm gỡ hòa 1-1', timestampSec: 250 },
-      { minute: '78\'', title: 'Xà ngang từ chối bàn thắng của Gabriel Martinelli', timestampSec: 480 }
-    ]
-  },
-  {
-    id: 'hl-3',
-    matchId: 'match-seriea-1',
-    title: 'Highlights: Inter Milan 2 - 1 AC Milan | Derby rực lửa thành Milan',
-    duration: '08:30',
-    league: 'Serie A',
-    thumbnail: cyberStadiumImg,
-    views: '950K lượt xem',
-    date: 'Hôm qua',
-    events: [
-      { minute: '28\'', title: 'Lautaro đánh đầu mở điểm cho Inter', timestampSec: 50 },
-      { minute: '57\'', title: 'Leão solo qua 2 hậu vệ ghi bàn quân bình', timestampSec: 190 },
-      { minute: '85\'', title: 'Thuram tung cú sút quyết định ấn định chiến thắng', timestampSec: 380 }
-    ]
   }
 ];
 
 export const EXPERT_ANALYSES: ExpertAnalysis[] = [
+  {
+    id: 'exp-unl-cro-eng',
+    matchId: 'unl-cro-eng-0410',
+    authorName: 'BLV Quang Huy',
+    authorTitle: 'Chuyên gia & Nhà bình luận bóng đá quốc tế',
+    authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80',
+    predictedScore: 'Croatia 0 - 7 Anh (Kết quả thực tế)',
+    confidenceRate: 98,
+    title: 'Cơn địa chấn lớn nhất lịch sử Nations League: Khi Tam Sư biến Maksimir thành sân tập',
+    summary: 'Tuyển Anh đã tạo nên một trong những chiến thắng hủy diệt và gây sốc nhất lịch sử bóng đá châu Âu khi vùi dập Croatia 7-0 ngay tại Zagreb. Bộ ba Kane - Bellingham - Saka đã có một ngày thi đấu ở đẳng cấp thế giới, bóp nghẹt tuyến giữa già cỗi của Croatia ngay từ những phút đầu tiên.',
+    tacticalKeyPoints: [
+      'Gareth Southgate/Lee Carsley áp dụng sơ đồ pressing tầm cao nghẹt thở 4-3-3',
+      'Khai thác triệt để khoảng trống sau lưng hai hậu vệ cánh của Croatia',
+      'Khả năng chuyển đổi trạng thái (transition) với tốc độ tia chớp của Saka và Foden',
+      'Croatia sụp đổ hoàn toàn về mặt tâm lý sau bàn thua thứ 3 ở cuối hiệp 1'
+    ],
+    keyClash: {
+      playerHome: 'Luka Modrić (Croatia)',
+      playerAway: 'Jude Bellingham (Anh)',
+      analysis: 'Bellingham với sức trẻ, thể lực sung mãn và khả năng tranh chấp vượt trội đã hoàn toàn áp đảo cựu quả bóng Vàng Modrić ở khu trung tuyến.'
+    },
+    oddsHomeWin: 4.80,
+    oddsDraw: 3.50,
+    oddsAwayWin: 1.75
+  },
+  {
+    id: 'exp-unl-por-nor',
+    matchId: 'unl-por-nor-0510',
+    authorName: 'BLV Anh Ngọc',
+    authorTitle: 'Chuyên gia bóng đá châu Âu',
+    authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80',
+    predictedScore: 'Bồ Đào Nha 2 - 1 Na Uy',
+    confidenceRate: 88,
+    title: 'Siêu đại chiến 01h45 đêm nay (05/10): Cristiano Ronaldo đọ súng Erling Haaland',
+    summary: 'Tâm điểm rạng sáng mai tại Lisbon là cuộc chạm trán đỉnh cao giữa hai cỗ máy ghi bàn vĩ đại nhất: CR7 với bản lĩnh lão tướng đối đầu với "quái vật" Erling Haaland đang đạt phong độ hủy diệt. Đội nào kiểm soát tốt khu vực 1/3 cuối sân sẽ nắm chắc tấm vé đầu bảng A.',
+    tacticalKeyPoints: [
+      'Bồ Đào Nha áp đảo về quyền kiểm soát bóng nhờ Bruno Fernandes và Bernardo Silva',
+      'Na Uy dựa vào các đường phản công trực diện của Martin Ødegaard nhắm thẳng vào Haaland',
+      'Đòn đánh biên và các tình huống cố định sẽ quyết định kết quả chung cuộc'
+    ],
+    keyClash: {
+      playerHome: 'Cristiano Ronaldo (Bồ Đào Nha)',
+      playerAway: 'Erling Haaland (Na Uy)',
+      analysis: 'Cuộc chiến giữa hai chân sút cự phách: khả năng chọn vị trí bản năng của CR7 đối đầu với tốc độ và sức càn lướt kinh hoàng của Haaland.'
+    },
+    oddsHomeWin: 1.85,
+    oddsDraw: 3.65,
+    oddsAwayWin: 4.10
+  },
   {
     id: 'exp-1',
     matchId: 'match-laliga-1',

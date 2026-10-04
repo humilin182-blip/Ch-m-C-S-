@@ -98,7 +98,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
   const [selectedMonth, setSelectedMonth] = useState<string>('all'); // 'all' | '2026-10' | '2026-11' | '2026-12'
   const [selectedRound, setSelectedRound] = useState<string>('all');
   const [selectedClub, setSelectedClub] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'SCHEDULED' | 'FINISHED' | 'LIVE'>('ALL');
+  const [statusFilter, setStatusFilter] = useState<'ALL' | 'SCHEDULED' | 'FINISHED'>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
   const [syncedMatchId, setSyncedMatchId] = useState<string | null>(null);
   const [revealedMatchIds, setRevealedMatchIds] = useState<string[]>([]);
@@ -288,17 +288,6 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
           >
             <span>🏁</span>
             <span>Đã kết thúc & Tỉ số FT ({finishedCount})</span>
-          </button>
-          <button
-            onClick={() => setStatusFilter('LIVE')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all flex items-center gap-1.5 ${
-              statusFilter === 'LIVE'
-                ? 'bg-rose-500 text-white font-bold shadow-md shadow-rose-500/20'
-                : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-800'
-            }`}
-          >
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-            <span>Đang đá LIVE ({matches.filter((m) => m.status === 'LIVE').length})</span>
           </button>
         </div>
 
@@ -588,8 +577,8 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                   className="flex items-center justify-between sm:justify-center sm:gap-8 cursor-pointer py-1.5"
                 >
                   {/* Home Team */}
-                  <div className="flex items-center gap-3 sm:w-56 justify-end text-right">
-                    <span className="text-sm sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
+                  <div className="flex items-center gap-1.5 sm:gap-3 flex-1 sm:w-56 justify-end text-right min-w-0">
+                    <span className="text-xs sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
                       {match.homeTeam.name}
                     </span>
                     {match.homeTeam.logo.startsWith('http') ? (
@@ -597,39 +586,30 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                         src={match.homeTeam.logo}
                         alt={match.homeTeam.shortName}
                         referrerPolicy="no-referrer"
-                        className="w-8 sm:w-9 h-8 sm:h-9 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60 shrink-0"
+                        className="w-6 h-6 sm:w-9 sm:h-9 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60 shrink-0"
                       />
                     ) : (
-                      <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-white border border-slate-700 shrink-0">
+                      <div className="w-6 h-6 sm:w-9 sm:h-9 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-[10px] sm:text-xs text-white border border-slate-700 shrink-0">
                         {match.homeTeam.shortName.substring(0, 2)}
                       </div>
                     )}
                   </div>
 
                   {/* Final Score or VS Box */}
-                  <div className="px-4 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-center min-w-[90px] sm:min-w-[110px] shadow-inner">
+                  <div className="px-2 sm:px-4 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-center min-w-[64px] sm:min-w-[110px] shadow-inner shrink-0 mx-1 sm:mx-0">
                     {isFinished ? (
                       <div>
-                        <div className="text-lg sm:text-xl font-mono font-extrabold text-white tracking-wider tabular-nums">
+                        <div className="text-sm sm:text-xl font-mono font-extrabold text-white tracking-wider tabular-nums">
                           {match.homeTeam.score} - {match.awayTeam.score}
                         </div>
-                        <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-0.5">
+                        <div className="text-[8px] sm:text-[10px] font-bold text-emerald-400 uppercase tracking-widest mt-0.5">
                           Tỉ số FT
-                        </div>
-                      </div>
-                    ) : isLive ? (
-                      <div>
-                        <div className="text-lg sm:text-xl font-mono font-extrabold text-emerald-400 tracking-wider tabular-nums">
-                          {match.homeTeam.score} - {match.awayTeam.score}
-                        </div>
-                        <div className="text-[10px] font-bold text-rose-400 uppercase tracking-widest mt-0.5">
-                          Đang đá
                         </div>
                       </div>
                     ) : (
                       <div>
-                        <span className="text-sm sm:text-base font-mono font-bold text-cyan-400">VS</span>
-                        <div className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest mt-0.5">
+                        <span className="text-xs sm:text-base font-mono font-bold text-cyan-400">VS</span>
+                        <div className="text-[8px] sm:text-[10px] font-bold text-cyan-300 uppercase tracking-widest mt-0.5">
                           Chưa đá
                         </div>
                       </div>
@@ -637,20 +617,20 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                   </div>
 
                   {/* Away Team */}
-                  <div className="flex items-center gap-3 sm:w-56 justify-start text-left">
+                  <div className="flex items-center gap-1.5 sm:gap-3 flex-1 sm:w-56 justify-start text-left min-w-0">
                     {match.awayTeam.logo.startsWith('http') ? (
                       <img
                         src={match.awayTeam.logo}
                         alt={match.awayTeam.shortName}
                         referrerPolicy="no-referrer"
-                        className="w-8 sm:w-9 h-8 sm:h-9 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60 shrink-0"
+                        className="w-6 h-6 sm:w-9 sm:h-9 object-contain rounded bg-slate-800/80 p-0.5 border border-slate-700/60 shrink-0"
                       />
                     ) : (
-                      <div className="w-8 sm:w-9 h-8 sm:h-9 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-xs text-white border border-slate-700 shrink-0">
+                      <div className="w-6 h-6 sm:w-9 sm:h-9 rounded-lg bg-slate-800 flex items-center justify-center font-bold text-[10px] sm:text-xs text-white border border-slate-700 shrink-0">
                         {match.awayTeam.shortName.substring(0, 2)}
                       </div>
                     )}
-                    <span className="text-sm sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors">
+                    <span className="text-xs sm:text-base font-bold text-white group-hover:text-emerald-300 transition-colors truncate">
                       {match.awayTeam.name}
                     </span>
                   </div>
@@ -822,26 +802,26 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
 
                 {/* Bottom Row: Stadium, Referee & Actions */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/60 text-xs">
-                  <div className="flex items-center gap-3 text-slate-400 text-[11px]">
-                    <div className="flex items-center gap-1">
-                      <MapPin className="w-3 h-3 text-emerald-400" />
-                      <span className="truncate max-w-[150px]">{match.stadium}</span>
+                  <div className="flex items-center gap-2 sm:gap-3 text-slate-400 text-[11px] min-w-0">
+                    <div className="flex items-center gap-1 min-w-0">
+                      <MapPin className="w-3 h-3 text-emerald-400 shrink-0" />
+                      <span className="truncate max-w-[120px] xs:max-w-[170px] sm:max-w-none">{match.stadium}</span>
                     </div>
                     {match.referee && (
-                      <span className="hidden sm:inline text-slate-400">
+                      <span className="hidden sm:inline text-slate-400 truncate">
                         Trọng tài: <strong className="text-slate-300 font-normal">{match.referee}</strong>
                       </span>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 ml-auto">
                     {/* Admin Actions */}
                     {isAdmin && (
-                      <div className="flex items-center gap-1 mr-1 pr-1.5 border-r border-slate-700/60">
+                      <div className="flex items-center gap-1 mr-0.5 pr-1 border-r border-slate-700/60">
                         <button
                           onClick={() => setEditingMatch(match)}
                           title="Admin: Chỉnh sửa trận này"
-                          className="flex items-center gap-1 px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold cursor-pointer"
+                          className="flex items-center gap-0.5 px-1.5 sm:px-2 py-1 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-[10px] sm:text-xs font-bold cursor-pointer"
                         >
                           <Edit3 className="w-3 h-3" />
                           <span>Sửa</span>
@@ -851,7 +831,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                             deleteMatch(match.id);
                           }}
                           title="Admin: Xóa trận này (đồng bộ toàn bộ máy chủ)"
-                          className="flex items-center gap-1 px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-xs font-bold cursor-pointer"
+                          className="flex items-center gap-0.5 px-1.5 sm:px-2 py-1 rounded bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 text-[10px] sm:text-xs font-bold cursor-pointer"
                         >
                           <Trash2 className="w-3 h-3" />
                           <span>Xóa</span>
@@ -862,10 +842,10 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                     {/* View Stats Button */}
                     <button
                       onClick={() => onSelectMatch(match)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-colors cursor-pointer"
+                      className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-[11px] sm:text-xs font-semibold transition-colors cursor-pointer"
                     >
-                      <BarChart2 className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Chi tiết & Thống kê</span>
+                      <BarChart2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                      <span><span className="hidden sm:inline">Chi tiết & </span>Thống kê</span>
                     </button>
 
                     {/* Sync to Google Calendar */}
@@ -873,23 +853,23 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                       href={getGoogleCalendarUrl(match)}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-500/30 text-xs font-medium transition-colors"
+                      className="flex items-center gap-1 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-cyan-950/50 hover:bg-cyan-900/60 text-cyan-300 border border-cyan-500/30 text-[11px] sm:text-xs font-medium transition-colors"
                       title="Thêm vào Google Calendar"
                     >
-                      <CalendarPlus className="w-3.5 h-3.5" />
-                      <span>Google Lịch</span>
+                      <CalendarPlus className="w-3.5 h-3.5 shrink-0" />
+                      <span><span className="hidden xs:inline">Google </span>Lịch</span>
                     </a>
 
                     {/* Download .ICS file */}
                     <button
                       onClick={() => handleDownloadICS(match)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer"
+                      className="flex items-center gap-1 px-2 py-1 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] sm:text-xs font-medium transition-colors cursor-pointer"
                       title="Tải file .ICS cho Apple Calendar / Outlook"
                     >
                       {syncedMatchId === match.id ? (
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                       ) : (
-                        <Download className="w-3.5 h-3.5" />
+                        <Download className="w-3.5 h-3.5 shrink-0" />
                       )}
                       <span>.ICS</span>
                     </button>
@@ -897,7 +877,7 @@ export const ScheduleSection: React.FC<ScheduleSectionProps> = ({
                     {/* Pre-Match Analysis */}
                     <button
                       onClick={() => onOpenAnalysis(match)}
-                      className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer"
+                      className="px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] sm:text-xs font-medium transition-colors cursor-pointer"
                       title="Xem nhận định chuyên gia"
                     >
                       Nhận định
