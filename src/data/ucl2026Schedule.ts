@@ -12,6 +12,145 @@ import { Match } from '../types/football';
  * Toàn bộ trận đấu có status: 'SCHEDULED' kích hoạt đồng hồ đếm ngược trực tiếp.
  */
 export const UCL_2026_SCHEDULE: Match[] = [
+  // ==========================================
+  // KẾT QUẢ CHAMPIONS LEAGUE - LƯỢT TRẬN 1 LEAGUE PHASE (MỚI NHẤT)
+  // ==========================================
+  {
+    id: 'ucl-md1-bay-bod',
+    leagueId: 'ucl',
+    round: 'Champion leauge - Lượt 1 League Phase',
+    homeTeam: {
+      id: 'bay',
+      name: 'Bayern Munich',
+      shortName: 'Bayern',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/132.png',
+      score: 5,
+      color: '#DC052D'
+    },
+    awayTeam: {
+      id: 'bod',
+      name: 'Bodø/Glimt',
+      shortName: 'Bodø/Glimt',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/805.png',
+      score: 0,
+      color: '#FFDD00'
+    },
+    status: 'FINISHED',
+    startTime: '2026-09-17T02:00:00+07:00',
+    stadium: 'Allianz Arena',
+    city: 'Munich',
+    referee: 'Clément Turpin (FRA)',
+    events: [
+      { id: 'ev-bb-1', minute: 16, type: 'GOAL', team: 'home', player: 'Harry Kane', detail: 'Đệm bóng cận thành mở tỉ số sau đường chuyền của Olise' },
+      { id: 'ev-bb-2', minute: 28, type: 'GOAL', team: 'home', player: 'Michael Olise', detail: 'Cứa lòng chân trái ngoạn mục vào góc chết' },
+      { id: 'ev-bb-3', minute: 42, type: 'GOAL', team: 'home', player: 'Jamal Musiala', detail: 'Solo qua ba hậu vệ dứt điểm chéo góc hạ thủ môn' },
+      { id: 'ev-bb-4', minute: 58, type: 'PENALTY_GOAL', team: 'home', player: 'Harry Kane', detail: 'Đá phạt đền chuẩn xác hoàn tất cú đúp' },
+      { id: 'ev-bb-5', minute: 74, type: 'GOAL', team: 'home', player: 'Leroy Sané', detail: 'Băng cắt dứt điểm một chạm tung nóc lưới ấn định 5-0' }
+    ],
+    stats: {
+      possession: [69, 31],
+      shots: [23, 5],
+      shotsOnTarget: [12, 1],
+      expectedGoals: [4.4, 0.4],
+      fouls: [6, 11],
+      corners: [9, 2],
+      offsides: [2, 1],
+      yellowCards: [1, 2],
+      redCards: [0, 0],
+      passes: [740, 310],
+      passAccuracy: [92, 75]
+    }
+  },
+  {
+    id: 'ucl-md1-mun-sab',
+    leagueId: 'ucl',
+    round: 'Champion leauge - Lượt 1 League Phase',
+    homeTeam: {
+      id: 'mun',
+      name: 'Manchester United',
+      shortName: 'Man United',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/360.png',
+      score: 4,
+      color: '#DA291C'
+    },
+    awayTeam: {
+      id: 'sab',
+      name: 'Sabah FK',
+      shortName: 'Sabah FK',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/20340.png',
+      score: 0,
+      color: '#1B365D'
+    },
+    status: 'FINISHED',
+    startTime: '2026-09-17T02:00:00+07:00',
+    stadium: 'Old Trafford',
+    city: 'Manchester',
+    referee: 'Slavko Vinčić (SVN)',
+    events: [
+      { id: 'ev-ms-1', minute: 21, type: 'GOAL', team: 'home', player: 'Rasmus Højlund', detail: 'Tì đè dứt điểm chân trái sấm sét mở tỉ số' },
+      { id: 'ev-ms-2', minute: 34, type: 'GOAL', team: 'home', player: 'Marcus Rashford', detail: 'Tăng tốc bên cánh trái cứa lòng vào góc xa' },
+      { id: 'ev-ms-3', minute: 65, type: 'GOAL', team: 'home', player: 'Rasmus Højlund', detail: 'Hoàn tất cú đúp sau pha bật tường với Bruno' },
+      { id: 'ev-ms-4', minute: 78, type: 'GOAL', team: 'home', player: 'Bruno Fernandes', detail: 'Sút xa sấm sét ngoài vòng cấm ấn định 4-0' }
+    ],
+    stats: {
+      possession: [65, 35],
+      shots: [19, 6],
+      shotsOnTarget: [9, 2],
+      expectedGoals: [3.3, 0.5],
+      fouls: [8, 12],
+      corners: [8, 3],
+      offsides: [1, 2],
+      yellowCards: [1, 2],
+      redCards: [0, 0],
+      passes: [650, 340],
+      passAccuracy: [89, 77]
+    }
+  },
+  {
+    id: 'ucl-md1-psg-gir',
+    leagueId: 'ucl',
+    round: 'Champion leauge - Lượt 1 League Phase',
+    homeTeam: {
+      id: 'psg',
+      name: 'Paris Saint-Germain',
+      shortName: 'PSG',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/160.png',
+      score: 3,
+      color: '#004170'
+    },
+    awayTeam: {
+      id: 'gir',
+      name: 'Girona FC',
+      shortName: 'Girona',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/9812.png',
+      score: 1,
+      color: '#CD1317'
+    },
+    status: 'FINISHED',
+    startTime: '2026-09-18T02:00:00+07:00',
+    stadium: 'Parc des Princes',
+    city: 'Paris',
+    referee: 'Daniel Siebert (GER)',
+    events: [
+      { id: 'ev-pg-1', minute: 19, type: 'GOAL', team: 'home', player: 'Ousmane Dembélé', detail: 'Pha dốc bóng kỹ thuật dứt điểm chân trái tung lưới' },
+      { id: 'ev-pg-2', minute: 48, type: 'GOAL', team: 'home', player: 'Khvicha Kvaratskhelia', detail: 'Độc diễn biên trái cứa lòng góc xa nhân đôi cách biệt' },
+      { id: 'ev-pg-3', minute: 72, type: 'GOAL', team: 'home', player: 'Bradley Barcola', detail: 'Tăng tốc bứt phá dứt điểm lạnh lùng nâng tỉ số 3-0' },
+      { id: 'ev-pg-4', minute: 86, type: 'GOAL', team: 'away', player: 'Cristhian Stuani', detail: 'Đánh đầu cận thành rút ngắn tỉ số 1-3 cho Girona' }
+    ],
+    stats: {
+      possession: [62, 38],
+      shots: [18, 9],
+      shotsOnTarget: [8, 3],
+      expectedGoals: [2.9, 1.1],
+      fouls: [9, 13],
+      corners: [7, 4],
+      offsides: [2, 1],
+      yellowCards: [1, 3],
+      redCards: [0, 0],
+      passes: [610, 390],
+      passAccuracy: [90, 81]
+    }
+  },
   {
     "id": "ucl-c1---matchday-2-ars-lil",
     "leagueId": "ucl",

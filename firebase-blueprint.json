@@ -1,0 +1,153 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile representation in the football application",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique Firebase Auth UID of the user"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name of the fan or administrator",
+          "maxLength": 80
+        },
+        "avatar": {
+          "type": "string",
+          "description": "Avatar photo URL of the user",
+          "maxLength": 500
+        },
+        "role": {
+          "type": "string",
+          "description": "User role in the system: admin or fan",
+          "enum": ["admin", "fan"]
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp in ISO format"
+        }
+      },
+      "required": ["id", "email", "name", "role", "createdAt"]
+    },
+    "CommunityMessage": {
+      "title": "CommunityMessage",
+      "description": "Real-time match chat and community discussion message",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the message"
+        },
+        "matchId": {
+          "type": "string",
+          "description": "Identifier of the match this discussion belongs to",
+          "maxLength": 80
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the message author"
+        },
+        "user": {
+          "type": "string",
+          "description": "Display name of the author",
+          "maxLength": 80
+        },
+        "avatar": {
+          "type": "string",
+          "description": "Avatar URL of the author",
+          "maxLength": 500
+        },
+        "fanOf": {
+          "type": "string",
+          "description": "Supported team or nation name",
+          "maxLength": 80
+        },
+        "content": {
+          "type": "string",
+          "description": "Comment text",
+          "maxLength": 500,
+          "minLength": 1
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Formatted timestamp of message submission"
+        },
+        "likesCount": {
+          "type": "number",
+          "description": "Total number of likes given to this message"
+        }
+      },
+      "required": ["id", "matchId", "userId", "user", "content", "timestamp", "likesCount"]
+    },
+    "MatchPrediction": {
+      "title": "MatchPrediction",
+      "description": "Score prediction for an upcoming match submitted by a fan",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Prediction record ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "UID of the fan submitting the prediction"
+        },
+        "userName": {
+          "type": "string",
+          "description": "Display name of the user",
+          "maxLength": 80
+        },
+        "matchId": {
+          "type": "string",
+          "description": "Identifier of the scheduled match",
+          "maxLength": 80
+        },
+        "predictedHome": {
+          "type": "number",
+          "description": "Predicted home team goals"
+        },
+        "predictedAway": {
+          "type": "number",
+          "description": "Predicted away team goals"
+        },
+        "submittedAt": {
+          "type": "string",
+          "description": "Timestamp when the prediction was saved"
+        }
+      },
+      "required": ["id", "userId", "matchId", "predictedHome", "predictedAway", "submittedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user account profiles and fan metadata"
+    },
+    "/communityMessages/{messageId}": {
+      "schema": {
+        "$ref": "#/entities/CommunityMessage"
+      },
+      "description": "Stores community chatter and live match comments"
+    },
+    "/predictions/{predictionId}": {
+      "schema": {
+        "$ref": "#/entities/MatchPrediction"
+      },
+      "description": "Stores fan score predictions for upcoming fixtures"
+    },
+    "/test/{testId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Connection test probe document"
+    }
+  }
+}

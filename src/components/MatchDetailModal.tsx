@@ -3,6 +3,7 @@ import { Match, CommunityMessage } from '../types/football';
 import { X, Play, Clock, Shield, Users, MessageSquare, Send, ThumbsUp, Flame, Edit3, Trash2, Calendar, MapPin, Award } from 'lucide-react';
 import { useAdmin } from '../context/AdminContext';
 import { calculateMatchCountdown } from '../services/footballApi';
+import { likeCommunityMessageInFirestore } from '../services/firestoreService';
 
 interface MatchDetailModalProps {
   match: Match | null;
@@ -534,6 +535,18 @@ export const MatchDetailModal: React.FC<MatchDetailModalProps> = ({
                         <span className="text-[10px] text-slate-500">{msg.timestamp}</span>
                       </div>
                       <p className="text-xs text-slate-300 mt-1 break-words">{msg.content}</p>
+                      <div className="flex items-center gap-2 mt-1.5 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            likeCommunityMessageInFirestore(msg.id, msg.reactionCount || 0);
+                          }}
+                          className="inline-flex items-center gap-1 text-[10px] text-slate-400 hover:text-emerald-400 cursor-pointer transition-colors"
+                        >
+                          <ThumbsUp className="w-3 h-3" />
+                          <span>{msg.reactionCount || 0}</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

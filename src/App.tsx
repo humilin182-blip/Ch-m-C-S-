@@ -6,6 +6,10 @@ import {
 import { Match, LeagueId, CommunityMessage } from './types/football';
 import { fetchAllLeaguesMatches } from './services/footballApi';
 import { playGoalSound } from './services/soundEffects';
+import {
+  subscribeCommunityMessages,
+  addCommunityMessageToFirestore
+} from './services/firestoreService';
 import { Header } from './components/Header';
 import { HeroPitchBanner } from './components/HeroPitchBanner';
 import { LiveScoreTicker } from './components/LiveScoreTicker';
@@ -102,6 +106,20 @@ export default function App() {
     INITIAL_COMMUNITY_MESSAGES
   );
 
+  // Real-time synchronization of Community Messages from Firestore
+  useEffect(() => {
+    const unsubscribe = subscribeCommunityMessages((remoteMsgs) => {
+      if (remoteMsgs && remoteMsgs.length > 0) {
+        setCommunityMessages((prev) => {
+          const remoteIds = new Set(remoteMsgs.map((m) => m.id));
+          const localOnly = prev.filter((m) => !remoteIds.has(m.id));
+          return [...remoteMsgs, ...localOnly];
+        });
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
   // Keep track of previous matches to detect new live goals
   const prevMatchesRef = useRef<Match[]>([]);
 
@@ -190,22 +208,6 @@ export default function App() {
     );
   };
 
-  // Handle new community message
-  const handleSendMessage = (matchId: string, content: string, fanOf: string) => {
-    const newMsg: CommunityMessage = {
-      id: `msg-${Date.now()}`,
-      matchId,
-      user: 'Bạn (Fan Việt Nam)',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=64&q=80',
-      fanOf,
-      content,
-      timestamp: 'Vừa xong',
-      reactionCount: 1,
-      userLiked: true
-    };
-    setCommunityMessages((prev) => [newMsg, ...prev]);
-  };
-
   const {
     currentUser,
     isAdmin,
@@ -217,6 +219,34 @@ export default function App() {
     isAuthModalOpen,
     setIsAuthModalOpen
   } = useAdmin();
+
+  // Handle new community message
+  const handleSendMessage = async (matchId: string, content: string, fanOf: string) => {
+    const authorName = currentUser?.name || 'Bạn (Fan Việt Nam)';
+    const authorAvatar = currentUser?.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=64&q=80';
+
+    const newMsg: CommunityMessage = {
+      id: `msg-${Date.now()}`,
+      matchId: matchId || 'general',
+      user: authorName,
+      avatar: authorAvatar,
+      fanOf: fanOf || 'Việt Nam',
+      content: content.trim(),
+      timestamp: 'Vừa xong',
+      reactionCount: 1,
+      userLiked: true
+    };
+
+    // Optimistic UI update
+    setCommunityMessages((prev) => [newMsg, ...prev]);
+
+    // Persist and broadcast to Firestore
+    try {
+      await addCommunityMessageToFirestore(newMsg);
+    } catch (err) {
+      console.warn('Firestore message save error:', err);
+    }
+  };
 
   // Prompt new visitors to log in with Google or Email on first visit
   useEffect(() => {
@@ -337,14 +367,14 @@ export default function App() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-bold text-white">
-                  Đã cập nhật: Địa chấn Croatia 0 - 7 Anh, TBN 3 - 1 CH Séc, Pháp 1 - 1 Ý & Lịch đấu rạng sáng 05/10!
+                  Đã cập nhật đầy đủ: Nations League Lượt 3, EPL Vòng 5, La Liga Vòng 6 & 7 và Cúp C1 Lượt 1!
                 </span>
                 <span className="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-wider">
                   Mới Nhất
                 </span>
               </div>
               <p className="text-[11px] text-slate-300 mt-0.5">
-                Các trận cầu đỉnh cao Nations League vừa kết thúc và lịch đấu đêm nay/rạng sáng 05/10 lúc 01h45: <strong className="text-amber-300">Bồ Đào Nha vs Na Uy (Ronaldo vs Haaland)</strong>, Hà Lan vs Serbia, Hy Lạp vs Đức, Wales vs Đan Mạch!
+                Bồ Đào Nha 2-1 Na Uy, Anh 7-0 Croatia, Man City 5-3 Sunderland, Barca 7-2 Racing, Bayern 5-0 Bodø/Glimt, MU 4-0 Sabah FK, Atletico 2-1 Real Madrid!
               </p>
             </div>
           </div>

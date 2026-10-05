@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Match, FriendRank } from '../types/football';
 import { FRIENDS_LEADERBOARD } from '../data/mockFootballData';
 import { X, Trophy, Award, CheckCircle, Share2, Sparkles, Flame } from 'lucide-react';
+import { savePredictionToFirestore } from '../services/firestoreService';
 
 interface PredictionGameModalProps {
   matches: Match[];
@@ -22,10 +23,18 @@ export const PredictionGameModal: React.FC<PredictionGameModalProps> = ({ matche
 
   const selectedMatch = matches.find((m) => m.id === selectedMatchId) || matches[0];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
     setMyPoints((prev) => prev + 30);
+
+    try {
+      if (selectedMatch) {
+        await savePredictionToFirestore(selectedMatch.id, homeScore, awayScore);
+      }
+    } catch (err) {
+      console.warn('Firestore prediction save notice:', err);
+    }
   };
 
   const handleShare = () => {

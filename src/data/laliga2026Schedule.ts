@@ -8,6 +8,194 @@ import { Match } from '../types/football';
  * Toàn bộ trận đấu chưa đá đều có status: 'SCHEDULED' để kích hoạt đồng hồ đếm ngược trực tiếp.
  */
 export const LALIGA_2026_SCHEDULE: Match[] = [
+  // ==========================================
+  // KẾT QUẢ LA LIGA VÒNG 6 & 7 (MỚI NHẤT)
+  // ==========================================
+  {
+    id: 'laliga-r7-bar-rac',
+    leagueId: 'laliga',
+    round: 'La Liga - Vòng 7',
+    homeTeam: {
+      id: 'bar',
+      name: 'FC Barcelona',
+      shortName: 'Barcelona',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/83.png',
+      score: 7,
+      color: '#A50044'
+    },
+    awayTeam: {
+      id: 'rac',
+      name: 'Racing Santander',
+      shortName: 'Racing',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/240.png',
+      score: 2,
+      color: '#008000'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-04T02:00:00+07:00',
+    stadium: 'Spotify Camp Nou',
+    city: 'Barcelona',
+    referee: 'Jesús Gil Manzano',
+    events: [
+      { id: 'ev-br-1', minute: 14, type: 'GOAL', team: 'home', player: 'Raphinha', detail: 'Sút xa sấm sét góc cao mở tỉ số cho Barca' },
+      { id: 'ev-br-2', minute: 24, type: 'GOAL', team: 'home', player: 'Lamine Yamal', detail: 'Độc diễn qua hai hậu vệ cứa lòng chân trái' },
+      { id: 'ev-br-3', minute: 31, type: 'GOAL', team: 'away', player: 'Íñigo Vicente', detail: 'Dứt điểm chéo góc rút ngắn tỉ số cho Racing' },
+      { id: 'ev-br-4', minute: 38, type: 'GOAL', team: 'home', player: 'Raphinha', detail: 'Đệm bóng cận thành sau đường căng ngang của Balde' },
+      { id: 'ev-br-5', minute: 45, type: 'PENALTY_GOAL', team: 'home', player: 'Robert Lewandowski', detail: 'Đá phạt đền lạnh lùng nâng tỉ số lên 4-1' },
+      { id: 'ev-br-6', minute: 55, type: 'GOAL', team: 'home', player: 'Lamine Yamal', detail: 'Hoàn tất cú đúp với cú sút chìm góc hiểm' },
+      { id: 'ev-br-7', minute: 62, type: 'GOAL', team: 'home', player: 'Raphinha', detail: 'Hoàn tất cú hat-trick siêu đẳng' },
+      { id: 'ev-br-8', minute: 70, type: 'GOAL', team: 'away', player: 'Andres Martin', detail: 'Đánh đầu cận thành rút ngắn tỉ số cho Racing' },
+      { id: 'ev-br-9', minute: 79, type: 'GOAL', team: 'home', player: 'Dani Olmo', detail: 'Xoay compa dứt điểm tung nóc lưới ấn định 7-2' }
+    ],
+    stats: {
+      possession: [73, 27],
+      shots: [26, 6],
+      shotsOnTarget: [15, 3],
+      expectedGoals: [5.1, 1.2],
+      fouls: [7, 14],
+      corners: [12, 2],
+      offsides: [1, 3],
+      yellowCards: [1, 2],
+      redCards: [0, 0],
+      passes: [790, 260],
+      passAccuracy: [93, 72]
+    }
+  },
+  {
+    id: 'laliga-r6-sev-bar',
+    leagueId: 'laliga',
+    round: 'La Liga - Vòng 6',
+    homeTeam: {
+      id: 'sev',
+      name: 'Sevilla FC',
+      shortName: 'Sevilla',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/243.png',
+      score: 1,
+      color: '#D4001F'
+    },
+    awayTeam: {
+      id: 'bar',
+      name: 'FC Barcelona',
+      shortName: 'Barcelona',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/83.png',
+      score: 3,
+      color: '#A50044'
+    },
+    status: 'FINISHED',
+    startTime: '2026-09-28T02:00:00+07:00',
+    stadium: 'Ramón Sánchez Pizjuán',
+    city: 'Sevilla',
+    referee: 'Alejandro Hernández Hernández',
+    events: [
+      { id: 'ev-sb-1', minute: 15, type: 'GOAL', team: 'home', player: 'Youssef En-Nesyri', detail: 'Đánh đầu cận thành dũng mãnh mở tỉ số cho Sevilla' },
+      { id: 'ev-sb-2', minute: 28, type: 'GOAL', team: 'away', player: 'Raphinha', detail: 'Cứa lòng chân trái gỡ hòa 1-1 cho Barca' },
+      { id: 'ev-sb-3', minute: 65, type: 'GOAL', team: 'away', player: 'Raphinha', detail: 'Nhân đôi cách biệt với cú sút chìm góc xa' },
+      { id: 'ev-sb-4', minute: 81, type: 'GOAL', team: 'away', player: 'Fermín López', detail: 'Đá bồi nhanh sau tình huống hỗn loạn ấn định 3-1' }
+    ],
+    stats: {
+      possession: [42, 58],
+      shots: [10, 18],
+      shotsOnTarget: [3, 8],
+      expectedGoals: [1.1, 2.7],
+      fouls: [13, 9],
+      corners: [4, 8],
+      offsides: [3, 2],
+      yellowCards: [3, 1],
+      redCards: [0, 0],
+      passes: [410, 590],
+      passAccuracy: [81, 89]
+    }
+  },
+  {
+    id: 'laliga-r7-atm-rma',
+    leagueId: 'laliga',
+    round: 'La Liga - Vòng 7 (Derby Madrid)',
+    homeTeam: {
+      id: 'atm',
+      name: 'Atlético Madrid',
+      shortName: 'Atletico',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/1068.png',
+      score: 2,
+      color: '#CB3524'
+    },
+    awayTeam: {
+      id: 'rma',
+      name: 'Real Madrid',
+      shortName: 'Real Madrid',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/86.png',
+      score: 1,
+      color: '#00529F'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-04T02:00:00+07:00',
+    stadium: 'Cívitas Metropolitano',
+    city: 'Madrid',
+    referee: 'José María Sánchez Martínez',
+    events: [
+      { id: 'ev-ar-1', minute: 22, type: 'GOAL', team: 'home', player: 'Julián Alvarez', detail: 'Tì đè dứt điểm chân phải hiểm hóc mở tỉ số' },
+      { id: 'ev-ar-2', minute: 45, type: 'GOAL', team: 'away', player: 'Kylian Mbappé', detail: 'Tăng tốc thoát bẫy việt vị gỡ hòa 1-1 cho Real Madrid' },
+      { id: 'ev-ar-3', minute: 70, type: 'GOAL', team: 'home', player: 'Antoine Griezmann', detail: 'Đá phạt lòng chân trái mẫu mực ấn định thắng lợi 2-1' }
+    ],
+    stats: {
+      possession: [46, 54],
+      shots: [13, 16],
+      shotsOnTarget: [5, 6],
+      expectedGoals: [1.8, 1.7],
+      fouls: [15, 12],
+      corners: [6, 7],
+      offsides: [1, 2],
+      yellowCards: [3, 2],
+      redCards: [0, 0],
+      passes: [440, 520],
+      passAccuracy: [83, 87]
+    }
+  },
+  {
+    id: 'laliga-r6-elc-rma',
+    leagueId: 'laliga',
+    round: 'La Liga - Vòng 6',
+    homeTeam: {
+      id: 'elc',
+      name: 'Elche CF',
+      shortName: 'Elche',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/3751.png',
+      score: 2,
+      color: '#006837'
+    },
+    awayTeam: {
+      id: 'rma',
+      name: 'Real Madrid',
+      shortName: 'Real Madrid',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/86.png',
+      score: 3,
+      color: '#00529F'
+    },
+    status: 'FINISHED',
+    startTime: '2026-09-27T23:30:00+07:00',
+    stadium: 'Estadio Manuel Martínez Valero',
+    city: 'Elche',
+    referee: 'Juan Martínez Munuera',
+    events: [
+      { id: 'ev-er-1', minute: 18, type: 'GOAL', team: 'home', player: 'Mourad El Ghezouani', detail: 'Đánh đầu cận thành mở tỉ số cho Elche' },
+      { id: 'ev-er-2', minute: 29, type: 'GOAL', team: 'away', player: 'Kylian Mbappé', detail: 'Đột phá solo gỡ hòa 1-1' },
+      { id: 'ev-er-3', minute: 54, type: 'GOAL', team: 'home', player: 'Nico Castro', detail: 'Sút xa ngoạn mục tái lập thế dẫn bàn 2-1 cho Elche' },
+      { id: 'ev-er-4', minute: 63, type: 'GOAL', team: 'away', player: 'Kylian Mbappé', detail: 'Hoàn tất cú đúp gỡ hòa 2-2 cho Real' },
+      { id: 'ev-er-5', minute: 84, type: 'GOAL', team: 'away', player: 'Jude Bellingham', detail: 'Đánh đầu dũng mãnh ấn định màn ngược dòng 3-2' }
+    ],
+    stats: {
+      possession: [38, 62],
+      shots: [9, 21],
+      shotsOnTarget: [4, 9],
+      expectedGoals: [1.3, 3.1],
+      fouls: [12, 8],
+      corners: [3, 10],
+      offsides: [2, 1],
+      yellowCards: [2, 1],
+      redCards: [0, 0],
+      passes: [350, 640],
+      passAccuracy: [77, 91]
+    }
+  },
   {
     "id": "laliga-r8-mlg-esp",
     "leagueId": "laliga",

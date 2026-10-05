@@ -1,6 +1,17 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Match, League } from '../types/football';
 import { LEAGUES_DATA } from '../data/mockFootballData';
+import {
+  auth,
+  db,
+  googleProvider,
+  signInWithPopup,
+  firebaseSignOut,
+  onAuthStateChanged,
+  doc,
+  setDoc,
+  FirebaseUser
+} from '../services/firebase';
 
 export const ADMIN_EMAIL = 'humilin182@gmail.com';
 export const DEFAULT_ADMIN_PASSWORD = 'humilin182';
@@ -10,6 +21,7 @@ export interface UserProfile {
   name: string;
   avatar?: string;
   isAdmin: boolean;
+  uid?: string;
 }
 
 interface AdminContextType {
@@ -19,7 +31,8 @@ interface AdminContextType {
   adminEmail: string;
   loginWithEmail: (email: string, name?: string, password?: string) => { success: boolean; error?: string };
   loginWithGoogle: (email: string, name?: string, avatar?: string) => { success: boolean; error?: string };
-  logout: () => void;
+  loginWithFirebaseGoogle: () => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
   isAuthModalOpen: boolean;
   setIsAuthModalOpen: (open: boolean) => void;
 
@@ -110,6 +123,42 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       console.warn('Cannot persist user profile:', e);
     }
   }, [currentUser]);
+
+  // Synchronize with Firebase Auth state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser: FirebaseUser | null) => {
+      if (fbUser) {
+        const cleanEmail = (fbUser.email || '').trim().toLowerCase();
+        const isUserAdmin = cleanEmail === ADMIN_EMAIL.toLowerCase();
+        const profile: UserProfile = {
+          email: cleanEmail,
+          name: fbUser.displayName || (isUserAdmin ? 'Huy Admin (humilin182)' : cleanEmail.split('@')[0]),
+          avatar: fbUser.photoURL || (isUserAdmin
+            ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'
+            : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80'),
+          isAdmin: isUserAdmin,
+          uid: fbUser.uid
+        };
+        setCurrentUser(profile);
+
+        // Store user in Firestore
+        try {
+          await setDoc(doc(db, 'users', fbUser.uid), {
+            id: fbUser.uid,
+            email: cleanEmail,
+            name: profile.name.slice(0, 80),
+            avatar: (profile.avatar || '').slice(0, 500),
+            role: isUserAdmin ? 'admin' : 'fan',
+            createdAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (err) {
+          console.warn('Firestore profile sync info:', err);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // isAdmin is strictly true ONLY when logged in with humilin182@gmail.com
   const isAdmin = Boolean(
@@ -282,7 +331,53 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return { success: true };
   };
 
-  const logout = () => {
+  const loginWithFirebaseGoogle = async (): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const fbUser = result.user;
+      const cleanEmail = (fbUser.email || '').trim().toLowerCase();
+      const isUserAdmin = cleanEmail === ADMIN_EMAIL.toLowerCase();
+
+      const profile: UserProfile = {
+        email: cleanEmail,
+        name: fbUser.displayName || (isUserAdmin ? 'Huy Admin (humilin182)' : cleanEmail.split('@')[0]),
+        avatar: fbUser.photoURL || (isUserAdmin
+          ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80'
+          : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=80&q=80'),
+        isAdmin: isUserAdmin,
+        uid: fbUser.uid
+      };
+      setCurrentUser(profile);
+
+      try {
+        await setDoc(doc(db, 'users', fbUser.uid), {
+          id: fbUser.uid,
+          email: cleanEmail,
+          name: profile.name.slice(0, 80),
+          avatar: (profile.avatar || '').slice(0, 500),
+          role: isUserAdmin ? 'admin' : 'fan',
+          createdAt: new Date().toISOString()
+        }, { merge: true });
+      } catch (err) {
+        console.warn('Firestore user write:', err);
+      }
+
+      return { success: true };
+    } catch (error: any) {
+      console.error('Firebase Google Sign-In error:', error);
+      return {
+        success: false,
+        error: error.message || 'Lỗi khi kết nối đăng nhập Google Firebase.'
+      };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await firebaseSignOut(auth);
+    } catch (e) {
+      console.warn('Firebase signout:', e);
+    }
     setCurrentUser(null);
   };
 
@@ -435,6 +530,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         adminEmail: ADMIN_EMAIL,
         loginWithEmail,
         loginWithGoogle,
+        loginWithFirebaseGoogle,
         logout,
         isAuthModalOpen,
         setIsAuthModalOpen,

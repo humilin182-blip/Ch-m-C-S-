@@ -1,0 +1,152 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net: Default deny all unmapped paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Primitive Helpers
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email.lower() == 'humilin182@gmail.com' &&
+        request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Validation helper for UserProfile
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['id', 'email', 'name', 'role', 'createdAt']) &&
+        data.keys().hasOnly(['id', 'email', 'name', 'avatar', 'role', 'createdAt']) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 200 &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 80 &&
+        data.role is string && (data.role == 'fan' || data.role == 'admin') &&
+        data.createdAt is string && data.createdAt.size() <= 50 &&
+        (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 500));
+    }
+
+    // Validation helper for CommunityMessage
+    function isValidCommunityMessage(data) {
+      return data.keys().hasAll(['id', 'matchId', 'userId', 'user', 'content', 'timestamp', 'likesCount']) &&
+        data.keys().hasOnly(['id', 'matchId', 'userId', 'user', 'avatar', 'fanOf', 'content', 'timestamp', 'likesCount']) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+        data.matchId is string && data.matchId.size() > 0 && data.matchId.size() <= 80 &&
+        data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+        data.user is string && data.user.size() > 0 && data.user.size() <= 80 &&
+        data.content is string && data.content.size() >= 1 && data.content.size() <= 500 &&
+        data.timestamp is string && data.timestamp.size() <= 50 &&
+        data.likesCount is number && data.likesCount >= 0 &&
+        (!('avatar' in data) || (data.avatar is string && data.avatar.size() <= 500)) &&
+        (!('fanOf' in data) || (data.fanOf is string && data.fanOf.size() <= 80));
+    }
+
+    // Validation helper for MatchPrediction
+    function isValidMatchPrediction(data) {
+      return data.keys().hasAll(['id', 'userId', 'matchId', 'predictedHome', 'predictedAway', 'submittedAt']) &&
+        data.keys().hasOnly(['id', 'userId', 'userName', 'matchId', 'predictedHome', 'predictedAway', 'submittedAt']) &&
+        data.id is string && data.id.size() > 0 && data.id.size() <= 128 &&
+        data.userId is string && data.userId.size() > 0 && data.userId.size() <= 128 &&
+        data.matchId is string && data.matchId.size() > 0 && data.matchId.size() <= 80 &&
+        data.predictedHome is number && data.predictedHome >= 0 && data.predictedHome <= 50 &&
+        data.predictedAway is number && data.predictedAway >= 0 && data.predictedAway <= 50 &&
+        data.submittedAt is string && data.submittedAt.size() <= 50 &&
+        (!('userName' in data) || (data.userName is string && data.userName.size() <= 80));
+    }
+
+    // Connection probe for boot health check
+    match /test/{testId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // User profiles & settings
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isAdmin();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().id == userId &&
+        (incoming().role == 'fan' || isAdmin());
+      allow update: if isOwner(userId) &&
+        isValidId(userId) &&
+        isValidUserProfile(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().email == existing().email &&
+        (incoming().role == existing().role || isAdmin()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['name', 'avatar', 'role']);
+      allow delete: if isAdmin();
+    }
+
+    // Real-time Community chatter & match comments
+    match /communityMessages/{messageId} {
+      allow read: if true;
+      allow create: if isVerifiedUser() &&
+        isValidId(messageId) &&
+        isValidCommunityMessage(incoming()) &&
+        incoming().id == messageId &&
+        incoming().userId == request.auth.uid;
+      allow update: if isValidId(messageId) && (
+        // Action 1: Author updates their message content
+        (isVerifiedUser() &&
+         existing().userId == request.auth.uid &&
+         isValidCommunityMessage(incoming()) &&
+         incoming().userId == existing().userId &&
+         incoming().id == existing().id &&
+         incoming().matchId == existing().matchId &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['content', 'timestamp'])) ||
+        // Action 2: Authenticated user likes message
+        (isSignedIn() &&
+         incoming().diff(existing()).affectedKeys().hasOnly(['likesCount']) &&
+         incoming().likesCount == existing().likesCount + 1) ||
+        // Action 3: Admin override
+        isAdmin()
+      );
+      allow delete: if (isVerifiedUser() && existing().userId == request.auth.uid) || isAdmin();
+    }
+
+    // Match predictions submitted by fans
+    match /predictions/{predictionId} {
+      allow read: if isSignedIn();
+      allow create: if isVerifiedUser() &&
+        isValidId(predictionId) &&
+        isValidMatchPrediction(incoming()) &&
+        incoming().id == predictionId &&
+        incoming().userId == request.auth.uid;
+      allow update: if isVerifiedUser() &&
+        isValidId(predictionId) &&
+        existing().userId == request.auth.uid &&
+        isValidMatchPrediction(incoming()) &&
+        incoming().id == existing().id &&
+        incoming().userId == existing().userId &&
+        incoming().matchId == existing().matchId &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['predictedHome', 'predictedAway', 'submittedAt']);
+      allow delete: if (isVerifiedUser() && existing().userId == request.auth.uid) || isAdmin();
+    }
+  }
+}

@@ -30,13 +30,13 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
     city: 'Zagreb',
     referee: 'Clément Turpin (FRA)',
     events: [
-      { id: 'ev-ce-1', minute: 14, type: 'GOAL', team: 'away', player: 'Harry Kane', detail: 'Đệm bóng cận thành từ đường căng ngang của Saka' },
-      { id: 'ev-ce-2', minute: 26, type: 'GOAL', team: 'away', player: 'Jude Bellingham', detail: 'Sút xa hiểm hóc găm thẳng góc chết' },
-      { id: 'ev-ce-3', minute: 38, type: 'GOAL', team: 'away', player: 'Bukayo Saka', detail: 'Độc diễn qua hai hậu vệ cứa lòng chân trái' },
-      { id: 'ev-ce-4', minute: 45, type: 'PENALTY_GOAL', team: 'away', player: 'Harry Kane', detail: 'Đá phạt đền thành công đánh lừa thủ môn' },
-      { id: 'ev-ce-5', minute: 58, type: 'GOAL', team: 'away', player: 'Bukayo Saka', detail: 'Đá bồi nhanh sau tình huống lộn xộn' },
-      { id: 'ev-ce-6', minute: 73, type: 'GOAL', team: 'away', player: 'Phil Foden', detail: 'Pha phối hợp một chạm mẫu mực trung lộ' },
-      { id: 'ev-ce-7', minute: 86, type: 'GOAL', team: 'away', player: 'Cole Palmer', detail: 'Bấm bóng kỹ thuật qua đầu thủ thành Croatia' }
+      { id: 'ev-ce-1', minute: 12, type: 'GOAL', team: 'away', player: 'Harry Kane', detail: 'Đệm bóng cận thành từ đường căng ngang hiểm hóc của Saka' },
+      { id: 'ev-ce-2', minute: 22, type: 'GOAL', team: 'away', player: 'Anthony Gordon', detail: 'Đá bồi cận thành nhân đôi cách biệt' },
+      { id: 'ev-ce-3', minute: 34, type: 'PENALTY_GOAL', team: 'away', player: 'Harry Kane', detail: 'Đá phạt đền lạnh lùng đánh lừa thủ môn Croatia' },
+      { id: 'ev-ce-4', minute: 45, extraMinute: 1, type: 'GOAL', team: 'away', player: 'Anthony Gordon', detail: 'Hoàn tất cú đúp với pha đệm bóng một chạm phút bù giờ' },
+      { id: 'ev-ce-5', minute: 58, type: 'GOAL', team: 'away', player: 'Harry Kane', detail: 'Hoàn tất cú hat-trick siêu đẳng với pha dứt điểm chìm' },
+      { id: 'ev-ce-6', minute: 67, type: 'GOAL', team: 'away', player: 'Jude Bellingham', detail: 'Sút xa sấm sét găm thẳng góc cao không thể cản phá' },
+      { id: 'ev-ce-7', minute: 81, type: 'GOAL', team: 'away', player: 'Bukayo Saka', detail: 'Độc diễn qua hai hậu vệ cứa lòng chân trái ấn định 7-0' }
     ],
     stats: {
       possession: [38, 62],
@@ -78,10 +78,10 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
     city: 'Madrid',
     referee: 'Daniele Orsato (ITA)',
     events: [
-      { id: 'ev-ec-1', minute: 8, type: 'GOAL', team: 'home', player: 'Lamine Yamal', detail: 'Bàn thắng sớm tuyệt mỹ từ pha cứa lòng chân trái' },
-      { id: 'ev-ec-2', minute: 33, type: 'GOAL', team: 'away', player: 'Patrik Schick', detail: 'Đánh đầu dũng mãnh gỡ hòa cho CH Séc' },
-      { id: 'ev-ec-3', minute: 57, type: 'GOAL', team: 'home', player: 'Lamine Yamal', detail: 'Hoàn tất cú đúp với cú sút sấm sét góc gần' },
-      { id: 'ev-ec-4', minute: 76, type: 'GOAL', team: 'home', player: 'Nico Williams', detail: 'Tăng tốc bên hành lang trái dứt điểm tung nóc lưới' }
+      { id: 'ev-ec-1', minute: 22, type: 'GOAL', team: 'home', player: 'Lamine Yamal', detail: 'Bàn thắng sớm tuyệt mỹ từ pha cứa lòng chân trái' },
+      { id: 'ev-ec-2', minute: 31, type: 'GOAL', team: 'away', player: 'Patrik Schick', detail: 'Đánh đầu dũng mãnh gỡ hòa cho CH Séc' },
+      { id: 'ev-ec-3', minute: 48, type: 'GOAL', team: 'home', player: 'Dani Olmo', detail: 'Xoay compa dứt điểm chìm hiểm hóc vào góc xa' },
+      { id: 'ev-ec-4', minute: 75, type: 'GOAL', team: 'home', player: 'Mikel Oyarzabal', detail: 'Băng vào tiếp bóng một chạm ấn định tỉ số 3-1' }
     ],
     stats: {
       possession: [68, 32],
@@ -123,9 +123,9 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
     city: 'Basel',
     referee: 'Slavko Vinčić (SVN)',
     events: [
-      { id: 'ev-ss-1', minute: 19, type: 'GOAL', team: 'away', player: 'Benjamin Šeško', detail: 'Pha chớp thời cơ dứt điểm chân phải' },
-      { id: 'ev-ss-2', minute: 54, type: 'GOAL', team: 'home', player: 'Breel Embolo', detail: 'Càn lướt dũng mãnh san bằng cách biệt' },
-      { id: 'ev-ss-3', minute: 82, type: 'GOAL', team: 'home', player: 'Granit Xhaka', detail: 'Nã đại bác từ cự ly 25m ấn định chiến thắng lội ngược dòng' }
+      { id: 'ev-ss-1', minute: 28, type: 'GOAL', team: 'home', player: 'Breel Embolo', detail: 'Tì đè dũng mãnh dứt điểm chân phải mở tỉ số cho Thụy Sĩ' },
+      { id: 'ev-ss-2', minute: 55, type: 'GOAL', team: 'away', player: 'Benjamin Šeško', detail: 'Pha chớp thời cơ dứt điểm chân phải gỡ hòa 1-1 cho Slovenia' },
+      { id: 'ev-ss-3', minute: 73, type: 'GOAL', team: 'home', player: 'Zeki Amdouni', detail: 'Cứa lòng chân trái hiểm hóc ấn định chiến thắng 2-1 cho Thụy Sĩ' }
     ],
     stats: {
       possession: [57, 43],
@@ -389,8 +389,8 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
     city: 'Paris',
     referee: 'Anthony Taylor (ENG)',
     events: [
-      { id: 'ev-fi-1', minute: 32, type: 'GOAL', team: 'home', player: 'Kylian Mbappé', detail: 'Tăng tốc đột phá dứt điểm chéo góc hạ Donnarumma' },
-      { id: 'ev-fi-2', minute: 74, type: 'GOAL', team: 'away', player: 'Federico Chiesa', detail: 'Vô lê ngoạn mục từ rìa vòng cấm sau quả phạt góc' }
+      { id: 'ev-fi-1', minute: 38, type: 'GOAL', team: 'home', player: 'Randal Kolo Muani', detail: 'Đánh đầu cận thành mở tỉ số cho Pháp' },
+      { id: 'ev-fi-2', minute: 64, type: 'GOAL', team: 'away', player: 'Mateo Retegui', detail: 'Tì đè dứt điểm chéo góc gỡ hòa 1-1 cho Ý' }
     ],
     stats: {
       possession: [52, 48],
@@ -432,9 +432,9 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
     city: 'Brussels',
     referee: 'Felix Zwayer (GER)',
     events: [
-      { id: 'ev-bt-1', minute: 18, type: 'GOAL', team: 'home', player: 'Romelu Lukaku', detail: 'Đè mặt trung vệ dứt điểm chân trái' },
-      { id: 'ev-bt-2', minute: 42, type: 'GOAL', team: 'home', player: 'Kevin De Bruyne', detail: 'Đá phạt hàng rào đưa bóng vào góc bánh chưng' },
-      { id: 'ev-bt-3', minute: 58, type: 'GOAL', team: 'home', player: 'Romelu Lukaku', detail: 'Băng cắt đánh đầu cận thành' }
+      { id: 'ev-bt-1', minute: 14, type: 'GOAL', team: 'home', player: 'Kevin De Bruyne', detail: 'Đá phạt hàng rào đưa bóng vào góc cao mở tỉ số' },
+      { id: 'ev-bt-2', minute: 42, type: 'GOAL', team: 'home', player: 'Romelu Lukaku', detail: 'Tì đè dũng mãnh dứt điểm chân trái nhân đôi cách biệt' },
+      { id: 'ev-bt-3', minute: 78, type: 'GOAL', team: 'home', player: 'Jeremy Doku', detail: 'Đột phá tốc độ solo qua hai hậu vệ ghi bàn ấn định 3-0' }
     ],
     stats: {
       possession: [59, 41],
@@ -545,13 +545,13 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
   {
     id: 'unl-por-nor-0510',
     leagueId: 'unl',
-    round: 'Nations League - Siêu Đại Chiến (Ronaldo vs Haaland)',
+    round: 'Nations League - Bảng A (Đại chiến)',
     homeTeam: {
       id: 'por',
       name: 'Bồ Đào Nha',
       shortName: 'Bồ Đào Nha',
       logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/countries/500/por.png',
-      score: 0,
+      score: 2,
       color: '#E42518'
     },
     awayTeam: {
@@ -559,39 +559,43 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
       name: 'Na Uy',
       shortName: 'Na Uy',
       logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/countries/500/nor.png',
-      score: 0,
+      score: 1,
       color: '#BA0C2F'
     },
-    status: 'SCHEDULED',
+    status: 'FINISHED',
     startTime: '2026-10-05T01:45:00+07:00',
     stadium: 'Estádio José Alvalade',
     city: 'Lisbon',
     referee: 'Daniele Orsato (ITA)',
-    events: [],
+    events: [
+      { id: 'ev-pn-1', minute: 12, type: 'GOAL', team: 'home', player: 'João Félix', detail: 'Đệm bóng tinh tế mở tỉ số sau pha kiến tạo của Bernardo Silva' },
+      { id: 'ev-pn-2', minute: 54, type: 'GOAL', team: 'away', player: 'Erling Haaland', detail: 'Tì đè dũng mãnh dứt điểm chân trái uy lực gỡ hòa 1-1' },
+      { id: 'ev-pn-3', minute: 82, type: 'GOAL', team: 'home', player: 'Bruno Fernandes', detail: 'Cú sút xa trái phá từ cự ly 25m găm thẳng góc cao' }
+    ],
     stats: {
-      possession: [50, 50],
-      shots: [0, 0],
-      shotsOnTarget: [0, 0],
-      expectedGoals: [0, 0],
-      fouls: [0, 0],
-      corners: [0, 0],
-      offsides: [0, 0],
-      yellowCards: [0, 0],
+      possession: [58, 42],
+      shots: [15, 9],
+      shotsOnTarget: [6, 4],
+      expectedGoals: [2.1, 1.4],
+      fouls: [10, 13],
+      corners: [7, 4],
+      offsides: [1, 2],
+      yellowCards: [2, 2],
       redCards: [0, 0],
-      passes: [0, 0],
-      passAccuracy: [0, 0]
+      passes: [580, 420],
+      passAccuracy: [89, 81]
     }
   },
   {
     id: 'unl-ned-srb-0510',
     leagueId: 'unl',
-    round: 'Nations League - Bảng A',
+    round: 'Nations League - Bảng A (Lượt 4)',
     homeTeam: {
       id: 'ned',
       name: 'Hà Lan',
       shortName: 'Hà Lan',
       logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/countries/500/ned.png',
-      score: 0,
+      score: 2,
       color: '#F36C21'
     },
     awayTeam: {
@@ -599,27 +603,31 @@ export const NATIONS_LEAGUE_2026_MATCHES: Match[] = [
       name: 'Serbia',
       shortName: 'Serbia',
       logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/countries/500/srb.png',
-      score: 0,
+      score: 1,
       color: '#C6363C'
     },
-    status: 'SCHEDULED',
+    status: 'FINISHED',
     startTime: '2026-10-05T01:45:00+07:00',
     stadium: 'Johan Cruyff Arena',
     city: 'Amsterdam',
     referee: 'Slavko Vinčić (SVN)',
-    events: [],
+    events: [
+      { id: 'ev-ns-1', minute: 18, type: 'GOAL', team: 'home', player: 'Cody Gakpo', detail: 'Cứa lòng chân phải kỹ thuật mở tỉ số cho Cơn lốc màu da cam' },
+      { id: 'ev-ns-2', minute: 41, type: 'GOAL', team: 'away', player: 'Dušan Vlahović', detail: 'Tì đè dũng mãnh đánh đầu gỡ hòa 1-1 cho Serbia' },
+      { id: 'ev-ns-3', minute: 62, type: 'GOAL', team: 'home', player: 'Memphis Depay', detail: 'Pha phối hợp một chạm dứt điểm hiểm hóc ấn định thắng lợi 2-1' }
+    ],
     stats: {
-      possession: [50, 50],
-      shots: [0, 0],
-      shotsOnTarget: [0, 0],
-      expectedGoals: [0, 0],
-      fouls: [0, 0],
-      corners: [0, 0],
-      offsides: [0, 0],
-      yellowCards: [0, 0],
+      possession: [61, 39],
+      shots: [16, 8],
+      shotsOnTarget: [7, 3],
+      expectedGoals: [2.3, 0.9],
+      fouls: [10, 14],
+      corners: [8, 3],
+      offsides: [1, 2],
+      yellowCards: [1, 3],
       redCards: [0, 0],
-      passes: [0, 0],
-      passAccuracy: [0, 0]
+      passes: [610, 390],
+      passAccuracy: [88, 79]
     }
   },
   {

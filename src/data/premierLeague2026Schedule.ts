@@ -7,6 +7,231 @@ import { Match } from '../types/football';
  * Tất cả trận đấu chưa đá đều có status: 'SCHEDULED' để kích hoạt đồng hồ đếm ngược thời gian thực.
  */
 export const PREMIER_LEAGUE_2026_SCHEDULE: Match[] = [
+  // ==========================================
+  // KẾT QUẢ VÒNG 5 NGOẠI HẠNG ANH (MỚI NHẤT)
+  // ==========================================
+  {
+    id: 'epl-r5-mci-sun',
+    leagueId: 'epl',
+    round: 'Ngoại Hạng Anh - Vòng 5',
+    homeTeam: {
+      id: 'mci',
+      name: 'Manchester City',
+      shortName: 'Man City',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/382.png',
+      score: 5,
+      color: '#6CABDD'
+    },
+    awayTeam: {
+      id: 'sun',
+      name: 'Sunderland',
+      shortName: 'Sunderland',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/394.png',
+      score: 3,
+      color: '#EB172B'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-03T21:00:00+07:00',
+    stadium: 'Etihad Stadium',
+    city: 'Manchester',
+    referee: 'Michael Oliver',
+    events: [
+      { id: 'ev-ms-1', minute: 18, type: 'GOAL', team: 'home', player: 'Erling Haaland', detail: 'Đệm bóng cận thành mở tỉ số cho Man City' },
+      { id: 'ev-ms-2', minute: 27, type: 'GOAL', team: 'away', player: 'Jobe Bellingham', detail: 'Sút xa ngoạn mục gỡ hòa 1-1 cho Sunderland' },
+      { id: 'ev-ms-3', minute: 34, type: 'GOAL', team: 'home', player: 'Phil Foden', detail: 'Cứa lòng chân trái đẳng cấp vào góc xa' },
+      { id: 'ev-ms-4', minute: 45, type: 'GOAL', team: 'away', player: 'Wilson Isidor', detail: 'Pha phản công chớp nhoáng dứt điểm gỡ hòa 2-2' },
+      { id: 'ev-ms-5', minute: 52, type: 'GOAL', team: 'home', player: 'Jeremy Doku', detail: 'Đột phá tốc độ dứt điểm chéo góc hiểm hóc' },
+      { id: 'ev-ms-6', minute: 61, type: 'GOAL', team: 'home', player: 'Erling Haaland', detail: 'Hoàn tất cú đúp với pha đánh đầu dũng mãnh' },
+      { id: 'ev-ms-7', minute: 76, type: 'GOAL', team: 'away', player: 'Eliezer Mayenda', detail: 'Băng cắt dứt điểm rút ngắn tỉ số xuống 3-4' },
+      { id: 'ev-ms-8', minute: 84, type: 'GOAL', team: 'home', player: 'Kevin De Bruyne', detail: 'Đá phạt tuyệt mỹ ấn định chiến thắng 5-3 kịch tính' }
+    ],
+    stats: {
+      possession: [66, 34],
+      shots: [24, 11],
+      shotsOnTarget: [13, 6],
+      expectedGoals: [4.2, 2.1],
+      fouls: [8, 12],
+      corners: [11, 4],
+      offsides: [2, 1],
+      yellowCards: [1, 2],
+      redCards: [0, 0],
+      passes: [710, 340],
+      passAccuracy: [91, 78]
+    }
+  },
+  {
+    id: 'epl-r5-bri-ars',
+    leagueId: 'epl',
+    round: 'Ngoại Hạng Anh - Vòng 5',
+    homeTeam: {
+      id: 'bri',
+      name: 'Brighton & Hove Albion',
+      shortName: 'Brighton',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/331.png',
+      score: 3,
+      color: '#0057B8'
+    },
+    awayTeam: {
+      id: 'ars',
+      name: 'Arsenal',
+      shortName: 'Arsenal',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/359.png',
+      score: 0,
+      color: '#EF0107'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-03T23:30:00+07:00',
+    stadium: 'Amex Stadium',
+    city: 'Brighton',
+    referee: 'Anthony Taylor',
+    events: [
+      { id: 'ev-ba-1', minute: 24, type: 'GOAL', team: 'home', player: 'João Pedro', detail: 'Dứt điểm quyết đoán mở tỉ số cho Brighton' },
+      { id: 'ev-ba-2', minute: 68, type: 'GOAL', team: 'home', player: 'João Pedro', detail: 'Hoàn tất cú đúp sau pha phối hợp mẫu mực' },
+      { id: 'ev-ba-3', minute: 85, type: 'GOAL', team: 'home', player: 'Yankuba Minteh', detail: 'Tăng tốc bên cánh phải sút tung nóc lưới' }
+    ],
+    stats: {
+      possession: [48, 52],
+      shots: [14, 12],
+      shotsOnTarget: [7, 3],
+      expectedGoals: [2.4, 1.1],
+      fouls: [11, 10],
+      corners: [6, 7],
+      offsides: [1, 2],
+      yellowCards: [2, 1],
+      redCards: [0, 0],
+      passes: [460, 510],
+      passAccuracy: [84, 87]
+    }
+  },
+  {
+    id: 'epl-r5-bre-che',
+    leagueId: 'epl',
+    round: 'Ngoại Hạng Anh - Vòng 5',
+    homeTeam: {
+      id: 'bre',
+      name: 'Brentford',
+      shortName: 'Brentford',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/337.png',
+      score: 3,
+      color: '#E30613'
+    },
+    awayTeam: {
+      id: 'che',
+      name: 'Chelsea',
+      shortName: 'Chelsea',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/363.png',
+      score: 0,
+      color: '#034694'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-03T18:30:00+07:00',
+    stadium: 'Gtech Community Stadium',
+    city: 'London',
+    referee: 'Simon Hooper',
+    events: [
+      { id: 'ev-bc-1', minute: 19, type: 'GOAL', team: 'home', player: 'Bryan Mbeumo', detail: 'Pha dứt điểm một chạm tinh tế mở tỉ số' },
+      { id: 'ev-bc-2', minute: 58, type: 'GOAL', team: 'home', player: 'Bryan Mbeumo', detail: 'Nhân đôi cách biệt sau pha phản công mẫu mực' },
+      { id: 'ev-bc-3', minute: 72, type: 'GOAL', team: 'home', player: 'Yoane Wissa', detail: 'Tì đè đánh đầu cận thành ấn định tỉ số 3-0' }
+    ],
+    stats: {
+      possession: [41, 59],
+      shots: [15, 13],
+      shotsOnTarget: [8, 3],
+      expectedGoals: [2.6, 0.9],
+      fouls: [13, 9],
+      corners: [5, 8],
+      offsides: [2, 1],
+      yellowCards: [2, 2],
+      redCards: [0, 0],
+      passes: [380, 560],
+      passAccuracy: [79, 88]
+    }
+  },
+  {
+    id: 'epl-r5-bou-liv',
+    leagueId: 'epl',
+    round: 'Ngoại Hạng Anh - Vòng 5',
+    homeTeam: {
+      id: 'bou',
+      name: 'Bournemouth',
+      shortName: 'Bournemouth',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/349.png',
+      score: 0,
+      color: '#DA291C'
+    },
+    awayTeam: {
+      id: 'liv',
+      name: 'Liverpool',
+      shortName: 'Liverpool',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/364.png',
+      score: 1,
+      color: '#C8102E'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-04T20:00:00+07:00',
+    stadium: 'Vitality Stadium',
+    city: 'Bournemouth',
+    referee: 'Paul Tierney',
+    events: [
+      { id: 'ev-bl-1', minute: 78, type: 'GOAL', team: 'away', player: 'Mohamed Salah', detail: 'Pha cứa lòng chân trái đẳng cấp vào góc xa ấn định 3 điểm' }
+    ],
+    stats: {
+      possession: [39, 61],
+      shots: [8, 17],
+      shotsOnTarget: [2, 6],
+      expectedGoals: [0.7, 1.8],
+      fouls: [12, 8],
+      corners: [4, 9],
+      offsides: [1, 2],
+      yellowCards: [2, 1],
+      redCards: [0, 0],
+      passes: [370, 620],
+      passAccuracy: [78, 90]
+    }
+  },
+  {
+    id: 'epl-r5-ful-mun',
+    leagueId: 'epl',
+    round: 'Ngoại Hạng Anh - Vòng 5',
+    homeTeam: {
+      id: 'ful',
+      name: 'Fulham',
+      shortName: 'Fulham',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/370.png',
+      score: 1,
+      color: '#000000'
+    },
+    awayTeam: {
+      id: 'mun',
+      name: 'Manchester United',
+      shortName: 'Man United',
+      logo: 'https://a.espncdn.com/combiner/i?img=/i/teamlogos/soccer/500/360.png',
+      score: 1,
+      color: '#DA291C'
+    },
+    status: 'FINISHED',
+    startTime: '2026-10-04T22:30:00+07:00',
+    stadium: 'Craven Cottage',
+    city: 'London',
+    referee: 'Jarred Gillett',
+    events: [
+      { id: 'ev-fm-1', minute: 35, type: 'GOAL', team: 'away', player: 'Bruno Fernandes', detail: 'Sút xa sấm sét từ cự ly 22m mở tỉ số cho MU' },
+      { id: 'ev-fm-2', minute: 52, type: 'GOAL', team: 'home', player: 'Raul Jiménez', detail: 'Đệm bóng cận thành gỡ hòa 1-1 cho Fulham' }
+    ],
+    stats: {
+      possession: [47, 53],
+      shots: [13, 15],
+      shotsOnTarget: [5, 6],
+      expectedGoals: [1.4, 1.6],
+      fouls: [10, 11],
+      corners: [6, 7],
+      offsides: [2, 1],
+      yellowCards: [2, 2],
+      redCards: [0, 0],
+      passes: [440, 490],
+      passAccuracy: [83, 86]
+    }
+  },
   {
     "id": "epl-r6-ars-lee",
     "leagueId": "epl",

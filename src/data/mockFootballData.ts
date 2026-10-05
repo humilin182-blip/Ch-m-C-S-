@@ -88,66 +88,88 @@ export const HIGHLIGHTS_DATA: HighlightItem[] = [
   {
     id: 'hl-unl-cro-eng',
     matchId: 'unl-cro-eng-0410',
-    title: 'Highlights: Croatia 0 - 7 Anh | Cơn địa chấn lớn nhất lịch sử Nations League',
+    title: 'Highlights: Croatia 0 - 7 Anh | Harry Kane lập hat-trick, Gordon lập cú đúp hủy diệt',
     duration: '12:40',
     league: 'UEFA Nations League',
     thumbnail: cyberHighlightImg,
-    views: '4.8M lượt xem',
+    views: '5.2M lượt xem',
     date: 'Vừa xong',
     events: [
-      { minute: '14\'', title: 'Harry Kane mở màn cơn mưa gôn với cú đệm lòng cận thành', timestampSec: 40 },
-      { minute: '26\'', title: 'Bellingham sút xa cháy lưới Croatia từ ngoài vòng cấm', timestampSec: 120 },
-      { minute: '38\'', title: 'Bukayo Saka solo ma thuật nâng tỉ số lên 3-0', timestampSec: 210 },
-      { minute: '45\'', title: 'Harry Kane hoàn tất cú đúp phạt đền', timestampSec: 310 },
-      { minute: '58\'', title: 'Saka hoàn tất cú đúp với pha đá bồi sấm sét', timestampSec: 430 },
-      { minute: '73\'', title: 'Phil Foden phối hợp đập nhả mẫu mực ghi bàn thứ 6', timestampSec: 540 },
-      { minute: '86\'', title: 'Cole Palmer bấm bóng ngẫu hứng ấn định tỉ số không tưởng 7-0', timestampSec: 670 }
+      { minute: '12\'', title: 'Harry Kane mở màn cơn mưa gôn với cú đệm lòng cận thành', timestampSec: 40 },
+      { minute: '22\'', title: 'Anthony Gordon đá bồi cận thành nâng tỉ số lên 2-0', timestampSec: 90 },
+      { minute: '34\'', title: 'Harry Kane đá phạt đền thành công nâng tỉ số lên 3-0', timestampSec: 180 },
+      { minute: '45+1\'', title: 'Anthony Gordon hoàn tất cú đúp với pha đệm bóng một chạm', timestampSec: 280 },
+      { minute: '58\'', title: 'Harry Kane hoàn tất cú hat-trick siêu hạng nâng tỉ số 5-0', timestampSec: 390 },
+      { minute: '67\'', title: 'Jude Bellingham sút xa cháy lưới Croatia từ ngoài vòng cấm', timestampSec: 490 },
+      { minute: '81\'', title: 'Bukayo Saka solo ma thuật ấn định chiến thắng không tưởng 7-0', timestampSec: 610 }
     ]
   },
   {
-    id: 'hl-unl-esp-cze',
-    matchId: 'unl-esp-cze-0410',
-    title: 'Highlights: Tây Ban Nha 3 - 1 CH Séc | Lamine Yamal lập cú đúp siêu hạng',
-    duration: '09:20',
-    league: 'UEFA Nations League',
-    thumbnail: cyberCleatsImg,
-    views: '2.9M lượt xem',
-    date: 'Hôm nay',
-    events: [
-      { minute: '08\'', title: 'Lamine Yamal mở tỉ số sớm bằng pha cứa lòng tuyệt đỉnh', timestampSec: 35 },
-      { minute: '33\'', title: 'Patrik Schick đánh đầu uy lực san hòa cho CH Séc', timestampSec: 170 },
-      { minute: '57\'', title: 'Lamine Yamal hoàn tất cú đúp với cú sút góc gần sấm sét', timestampSec: 310 },
-      { minute: '76\'', title: 'Nico Williams bứt tốc ghi bàn ấn định 3-1 cho La Roja', timestampSec: 490 }
-    ]
-  },
-  {
-    id: 'hl-unl-fra-ita',
-    matchId: 'unl-fra-ita-0310',
-    title: 'Highlights: Pháp 1 - 1 Italia | Hòa nghẹt thở giữa hai ông lớn châu Âu',
-    duration: '10:05',
+    id: 'hl-unl-por-nor',
+    matchId: 'unl-por-nor-0510',
+    title: 'Highlights: Bồ Đào Nha 2 - 1 Na Uy | Bruno Fernandes sút xa rực sáng, Haaland lập công',
+    duration: '11:15',
     league: 'UEFA Nations League',
     thumbnail: cyberStadiumImg,
-    views: '3.1M lượt xem',
-    date: 'Hôm qua',
+    views: '4.1M lượt xem',
+    date: 'Mới nhất',
     events: [
-      { minute: '32\'', title: 'Mbappé tăng tốc đột phá mở tỉ số cho tuyển Pháp', timestampSec: 65 },
-      { minute: '74\'', title: 'Federico Chiesa vô lê bóng sống gỡ hòa 1-1 nghẹt thở cho Italia', timestampSec: 380 }
+      { minute: '12\'', title: 'João Félix đệm bóng một chạm tinh tế mở tỉ số cho Selecao', timestampSec: 45 },
+      { minute: '54\'', title: 'Erling Haaland tì đè dũng mãnh dứt điểm gỡ hòa 1-1 cho Na Uy', timestampSec: 210 },
+      { minute: '82\'', title: 'Bruno Fernandes nã đại bác ngoài vòng cấm ấn định chiến thắng 2-1', timestampSec: 450 }
     ]
   },
   {
-    id: 'hl-1',
-    matchId: 'match-ucl-1',
-    title: 'Highlights: Manchester City 2 - 1 Real Madrid | Siêu phẩm Foden nổ tung cầu trường',
-    duration: '09:42',
-    league: 'Champion leauge',
-    thumbnail: cyberHighlightImg,
-    views: '2.4M lượt xem',
-    date: 'C1 Châu Âu',
+    id: 'hl-epl-mci-sun',
+    matchId: 'epl-r5-mci-sun',
+    title: 'Highlights: Man City 5 - 3 Sunderland | Mưa bàn thắng mãn nhãn, Haaland cú đúp',
+    duration: '13:05',
+    league: 'Premier League',
+    thumbnail: cyberCleatsImg,
+    views: '3.6M lượt xem',
+    date: 'Vòng 5',
     events: [
-      { minute: '23\'', title: 'Haaland mở tỉ số bằng pha đánh đầu sấm sét', timestampSec: 45 },
-      { minute: '54\'', title: 'Mbappé tăng tốc ghi bàn gỡ hòa đẳng cấp', timestampSec: 180 },
-      { minute: '68\'', title: 'Phil Foden lập siêu phẩm nã đại bác góc xa', timestampSec: 320 },
-      { minute: '89\'', title: 'Ederson bay người cản phá cú sút phút chót của Vinícius', timestampSec: 510 }
+      { minute: '18\'', title: 'Haaland mở tỉ số cận thành cho Man City', timestampSec: 40 },
+      { minute: '27\'', title: 'Jobe Bellingham sút xa sấm sét gỡ hòa 1-1 cho Sunderland', timestampSec: 130 },
+      { minute: '34\'', title: 'Phil Foden cứa lòng chân trái góc xa đưa Man City dẫn 2-1', timestampSec: 220 },
+      { minute: '52\'', title: 'Jeremy Doku solo tốc độ dứt điểm chéo góc', timestampSec: 340 },
+      { minute: '61\'', title: 'Haaland hoàn tất cú đúp với pha đánh đầu dũng mãnh', timestampSec: 430 },
+      { minute: '84\'', title: 'Kevin De Bruyne đá phạt hàng rào ấn định tỉ số 5-3', timestampSec: 580 }
+    ]
+  },
+  {
+    id: 'hl-laliga-bar-rac',
+    matchId: 'laliga-r7-bar-rac',
+    title: 'Highlights: Barcelona 7 - 2 Racing Santander | Raphinha lập hat-trick, Yamal bùng nổ',
+    duration: '12:20',
+    league: 'La Liga',
+    thumbnail: cyberHighlightImg,
+    views: '3.9M lượt xem',
+    date: 'Vòng 7',
+    events: [
+      { minute: '14\'', title: 'Raphinha nã đại bác mở màn tỉ số cho Barca', timestampSec: 35 },
+      { minute: '24\'', title: 'Lamine Yamal rê dắt solo tuyệt mỹ nâng tỉ số 2-0', timestampSec: 110 },
+      { minute: '45\'', title: 'Lewandowski sút phạt đền thành công', timestampSec: 260 },
+      { minute: '55\'', title: 'Yamal hoàn tất cú đúp với cú sút chìm góc hiểm', timestampSec: 360 },
+      { minute: '62\'', title: 'Raphinha hoàn tất cú hat-trick đẳng cấp', timestampSec: 470 },
+      { minute: '79\'', title: 'Dani Olmo xoay compa ấn định thắng lợi đậm đà 7-2', timestampSec: 610 }
+    ]
+  },
+  {
+    id: 'hl-ucl-bay-bod',
+    matchId: 'ucl-md1-bay-bod',
+    title: 'Highlights: Bayern Munich 5 - 0 Bodø/Glimt | Hùm Xám phô diễn sức mạnh vượt trội',
+    duration: '10:50',
+    league: 'Champion leauge',
+    thumbnail: cyberStadiumImg,
+    views: '2.8M lượt xem',
+    date: 'Lượt 1 C1',
+    events: [
+      { minute: '16\'', title: 'Harry Kane đệm bóng cận thành mở tỉ số cho Bayern', timestampSec: 45 },
+      { minute: '28\'', title: 'Michael Olise cứa lòng chân trái găm góc chết', timestampSec: 140 },
+      { minute: '42\'', title: 'Jamal Musiala độc diễn qua ba cầu thủ ghi bàn 3-0', timestampSec: 280 },
+      { minute: '58\'', title: 'Harry Kane hoàn tất cú đúp penalty chuẩn xác', timestampSec: 410 },
+      { minute: '74\'', title: 'Leroy Sané đệm bóng cận thành ấn định 5-0 cho Bayern', timestampSec: 520 }
     ]
   }
 ];
@@ -159,15 +181,15 @@ export const EXPERT_ANALYSES: ExpertAnalysis[] = [
     authorName: 'BLV Quang Huy',
     authorTitle: 'Chuyên gia & Nhà bình luận bóng đá quốc tế',
     authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80',
-    predictedScore: 'Croatia 0 - 7 Anh (Kết quả thực tế)',
+    predictedScore: 'Croatia 0 - 7 Anh (Chính xác)',
     confidenceRate: 98,
     title: 'Cơn địa chấn lớn nhất lịch sử Nations League: Khi Tam Sư biến Maksimir thành sân tập',
-    summary: 'Tuyển Anh đã tạo nên một trong những chiến thắng hủy diệt và gây sốc nhất lịch sử bóng đá châu Âu khi vùi dập Croatia 7-0 ngay tại Zagreb. Bộ ba Kane - Bellingham - Saka đã có một ngày thi đấu ở đẳng cấp thế giới, bóp nghẹt tuyến giữa già cỗi của Croatia ngay từ những phút đầu tiên.',
+    summary: 'Tuyển Anh đã tạo nên chiến thắng hủy diệt 7-0 không tưởng ngay tại Zagreb. Harry Kane lập hat-trick, Anthony Gordon lập cú đúp cùng hai siêu phẩm của Jude Bellingham và Bukayo Saka đã làm sụp đổ hoàn toàn khối phòng ngự của Croatia.',
     tacticalKeyPoints: [
       'Gareth Southgate/Lee Carsley áp dụng sơ đồ pressing tầm cao nghẹt thở 4-3-3',
       'Khai thác triệt để khoảng trống sau lưng hai hậu vệ cánh của Croatia',
-      'Khả năng chuyển đổi trạng thái (transition) với tốc độ tia chớp của Saka và Foden',
-      'Croatia sụp đổ hoàn toàn về mặt tâm lý sau bàn thua thứ 3 ở cuối hiệp 1'
+      'Khả năng chuyển đổi trạng thái (transition) với tốc độ tia chớp của Saka và Gordon',
+      'Harry Kane lùi sâu chia bài và tận dụng hoàn hảo các cơ hội trong vòng cấm'
     ],
     keyClash: {
       playerHome: 'Luka Modrić (Croatia)',
@@ -184,23 +206,49 @@ export const EXPERT_ANALYSES: ExpertAnalysis[] = [
     authorName: 'BLV Anh Ngọc',
     authorTitle: 'Chuyên gia bóng đá châu Âu',
     authorAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=80&q=80',
-    predictedScore: 'Bồ Đào Nha 2 - 1 Na Uy',
-    confidenceRate: 88,
-    title: 'Siêu đại chiến 01h45 đêm nay (05/10): Cristiano Ronaldo đọ súng Erling Haaland',
-    summary: 'Tâm điểm rạng sáng mai tại Lisbon là cuộc chạm trán đỉnh cao giữa hai cỗ máy ghi bàn vĩ đại nhất: CR7 với bản lĩnh lão tướng đối đầu với "quái vật" Erling Haaland đang đạt phong độ hủy diệt. Đội nào kiểm soát tốt khu vực 1/3 cuối sân sẽ nắm chắc tấm vé đầu bảng A.',
+    predictedScore: 'Bồ Đào Nha 2 - 1 Na Uy (Chính xác)',
+    confidenceRate: 92,
+    title: 'Bồ Đào Nha 2 - 1 Na Uy: Bản lĩnh Selecao và siêu phẩm phút 82 của Bruno Fernandes',
+    summary: 'Cuộc so tài đỉnh cao giữa Ronaldo và Haaland đã diễn ra vô cùng kịch tính. Dù Haaland gỡ hòa 1-1 cho Na Uy ở phút 54, nhưng khoảnh khắc thiên tài của Bruno Fernandes ở phút 82 với cú nã đại bác ngoài vòng cấm đã giữ trọn vẹn 3 điểm ở lại Lisbon.',
     tacticalKeyPoints: [
-      'Bồ Đào Nha áp đảo về quyền kiểm soát bóng nhờ Bruno Fernandes và Bernardo Silva',
-      'Na Uy dựa vào các đường phản công trực diện của Martin Ødegaard nhắm thẳng vào Haaland',
-      'Đòn đánh biên và các tình huống cố định sẽ quyết định kết quả chung cuộc'
+      'Bồ Đào Nha áp đảo hoàn toàn về thời lượng kiểm soát bóng (58%)',
+      'Bernardo Silva và Bruno Fernandes điều tiết nhịp độ và khai thác tốt hành lang trong',
+      'Na Uy nguy hiểm trong các tình huống bóng dài nhắm vào Haaland nhưng thiếu người tiếp ứng ở tuyến hai',
+      'Khả năng dứt điểm từ xa tạo đột biến mang lại bàn thắng quyết định'
     ],
     keyClash: {
-      playerHome: 'Cristiano Ronaldo (Bồ Đào Nha)',
+      playerHome: 'Bruno Fernandes (Bồ Đào Nha)',
       playerAway: 'Erling Haaland (Na Uy)',
-      analysis: 'Cuộc chiến giữa hai chân sút cự phách: khả năng chọn vị trí bản năng của CR7 đối đầu với tốc độ và sức càn lướt kinh hoàng của Haaland.'
+      analysis: 'Haaland nổ súng khẳng định đẳng cấp sát thủ, nhưng sự toàn diện và bàn thắng vàng của Bruno Fernandes đã định đoạt kết quả trận chiến.'
     },
     oddsHomeWin: 1.85,
     oddsDraw: 3.65,
     oddsAwayWin: 4.10
+  },
+  {
+    id: 'exp-epl-mci-sun',
+    matchId: 'epl-r5-mci-sun',
+    authorName: 'BLV Quang Huy',
+    authorTitle: 'Chuyên gia & Nhà bình luận bóng đá quốc tế',
+    authorAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&q=80',
+    predictedScore: 'Man City 5 - 3 Sunderland (Chính xác)',
+    confidenceRate: 90,
+    title: 'Man City 5 - 3 Sunderland: Cơn mưa 8 bàn thắng điên rồ tại Etihad',
+    summary: 'Man City phô diễn hỏa lực tấn công hủy diệt với cú đúp của Haaland cùng các pha lập công của Foden, Doku và De Bruyne. Dù Sunderland thi đấu quật khởi nhờ bàn thắng của Jobe Bellingham, Isidor và Mayenda nhưng không thể cưỡng lại sức mạnh của nhà ĐKVĐ.',
+    tacticalKeyPoints: [
+      'Man City tung ra tới 24 cú sút và 13 lần trúng đích',
+      'Kevin De Bruyne vào sân tạo ra sự khác biệt lớn với cú đá phạt thần sầu',
+      'Sunderland kiên cường phản công chuyển đổi trạng thái chớp nhoáng',
+      'Erling Haaland tiếp tục dẫn đầu danh sách vua phá lưới EPL'
+    ],
+    keyClash: {
+      playerHome: 'Erling Haaland (Man City)',
+      playerAway: 'Jobe Bellingham (Sunderland)',
+      analysis: 'Cả hai đều ghi dấu ấn đậm nét, nhưng bản năng sát thủ trong vòng cấm của Haaland giúp Man City làm chủ cuộc chơi.'
+    },
+    oddsHomeWin: 1.25,
+    oddsDraw: 6.50,
+    oddsAwayWin: 11.00
   },
   {
     id: 'exp-1',

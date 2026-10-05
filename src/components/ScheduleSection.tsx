@@ -64,13 +64,17 @@ export const TOP_CLUBS_FILTER = [
 export const ROUNDS_PRESET = [
   { id: 'all', label: 'Tất cả các vòng & lượt đấu' },
   // Cúp C1 UEFA Champions League
-  { id: 'Matchday 2', label: '⭐ Champion leauge Lượt 2 (14 - 15/10 Man City vs PSG, Arsenal vs Lille)' },
-  { id: 'Matchday 3', label: '⭐ Champion leauge Lượt 3 (21 - 22/10 PSG vs Barca, Bayern vs Arsenal)' },
-  { id: 'Matchday 4', label: '⭐ Champion leauge Lượt 4 (04 - 05/11 Atletico vs Bayern, Barca vs Villa)' },
-  { id: 'Matchday 5', label: '⭐ Champion leauge Lượt 5 (25 - 26/11 Arsenal vs BVB, Real vs PSV)' },
-  { id: 'Matchday 6', label: '⭐ Champion leauge Lượt 6 (09 - 10/12 Barca vs Man City, Arsenal vs Real)' },
-  // Các vòng giải VĐQG
-  { id: 'Vòng 5', label: 'Vòng 5 (10 - 11/10 Bundesliga)' },
+  { id: 'Lượt 1 League Phase', label: '⭐ C1 Lượt 1 (Bayern 5-0, MU 4-0 Sabah, PSG 3-1)' },
+  { id: 'Matchday 2', label: '⭐ C1 Lượt 2 (14 - 15/10 Man City vs PSG, Arsenal vs Lille)' },
+  { id: 'Matchday 3', label: '⭐ C1 Lượt 3 (21 - 22/10 PSG vs Barca, Bayern vs Arsenal)' },
+  { id: 'Matchday 4', label: '⭐ C1 Lượt 4 (04 - 05/11 Atletico vs Bayern, Barca vs Villa)' },
+  { id: 'Matchday 5', label: '⭐ C1 Lượt 5 (25 - 26/11 Arsenal vs BVB, Real vs PSV)' },
+  { id: 'Matchday 6', label: '⭐ C1 Lượt 6 (09 - 10/12 Barca vs Man City, Arsenal vs Real)' },
+  // UEFA Nations League & VĐQG
+  { id: 'Nations League', label: '🇪🇺 Nations League (Anh 7-0, BĐN 2-1 Na Uy, TBN 3-1)' },
+  { id: 'Ngoại Hạng Anh - Vòng 5', label: '🏴 EPL Vòng 5 (MC 5-3, Brighton 3-0 Arsenal, Brentford 3-0 Chelsea)' },
+  { id: 'La Liga - Vòng 7', label: '🇪🇸 La Liga Vòng 7 (Barca 7-2 Racing, Atletico 2-1 Real)' },
+  { id: 'La Liga - Vòng 6', label: '🇪🇸 La Liga Vòng 6 (Sevilla 1-3 Barca, Elche 2-3 Real)' },
   { id: 'Vòng 6', label: 'Vòng 6 (10 - 13/10 Ligue 1 & Serie A mở màn, Lens vs Lyon)' },
   { id: 'Vòng 7', label: 'Vòng 7 (17 - 20/10 Lyon vs Nice, Milan vs Atalanta, Juve vs Lazio)' },
   { id: 'Vòng 8', label: '💥 Vòng 8 (Siêu đại chiến PSG vs Lyon, Der Klassiker, Napoli vs Roma)' },
